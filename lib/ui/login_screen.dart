@@ -1,6 +1,7 @@
 // lib/view/login_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:progmobile_flutter/core/routes.dart';
 import '../viewmodels/login_viewmodel.dart';
 
 class LoginScreen extends ConsumerWidget {
@@ -30,7 +31,12 @@ class LoginScreen extends ConsumerWidget {
             vm.isLoading
                 ? const CircularProgressIndicator()
                 : ElevatedButton(
-              onPressed: () => ref.read(loginViewModelProvider.notifier).login(),
+              onPressed: () async {
+                  await ref.read(loginViewModelProvider).login();
+                  if (context.mounted) {
+                    Navigator.pushReplacementNamed(context, AppRoutes.homeGiocatore);
+                  }
+              },
               child: const Text('Login'),
             ),
             TextButton(
