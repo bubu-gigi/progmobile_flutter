@@ -4,17 +4,17 @@ import '../models/user.dart';
 class UserDao {
   final _usersRef = FirebaseFirestore.instance.collection('utenti');
 
-  Future<UserModel?> getUserById(String id) async {
+  Future<User?> getUserById(String id) async {
     final doc = await _usersRef.doc(id).get();
     if (!doc.exists) return null;
-    return UserModel.fromFirestore(doc.data()!, doc.id);
+    return User.fromFirestore(doc.data()!, doc.id);
   }
 
-  Future<void> createUser(UserModel user) async {
+  Future<void> createUser(User user) async {
     await _usersRef.doc(user.id).set(user.toMap());
   }
 
-  Future<void> updateUser(UserModel user) async {
+  Future<void> updateUser(User user) async {
     await _usersRef.doc(user.id).update(user.toMap());
   }
 
@@ -22,10 +22,10 @@ class UserDao {
     await _usersRef.doc(id).delete();
   }
 
-  Stream<List<UserModel>> watchAllUsers() {
+  Stream<List<User>> watchAllUsers() {
     return _usersRef.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        return UserModel.fromFirestore(doc.data(), doc.id);
+        return User.fromFirestore(doc.data(), doc.id);
       }).toList();
     });
   }

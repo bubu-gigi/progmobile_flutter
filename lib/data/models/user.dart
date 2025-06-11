@@ -1,4 +1,4 @@
-class UserModel {
+class User {
   final String id;
   final String codiceFiscale;
   final String cognome;
@@ -8,7 +8,7 @@ class UserModel {
   final String ruolo;
   final List<String> preferiti;
 
-  UserModel({
+  User({
     required this.id,
     required this.codiceFiscale,
     required this.cognome,
@@ -19,8 +19,8 @@ class UserModel {
     required this.preferiti,
   });
 
-  factory UserModel.fromFirestore(Map<String, dynamic> data, String id) {
-    return UserModel(
+  factory User.fromFirestore(Map<String, dynamic> data, String id) {
+    return User(
       id: id,
       codiceFiscale: data['codiceFiscale'] ?? '',
       cognome: data['cognome'] ?? '',
