@@ -1,0 +1,34 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../collections/struttura.dart';
+
+class StrutturaDao {
+  final CollectionReference struttureRef =
+  FirebaseFirestore.instance.collection('strutture');
+
+  Future<void> addStruttura(Struttura struttura) async {
+    final docRef = struttureRef.doc();
+    await docRef.set(struttura.toMap());
+  }
+
+  Future<void> updateStruttura(Struttura struttura) async {
+    final docRef = struttureRef.doc(struttura.id);
+    await docRef.set(struttura.toMap());
+  }
+
+  Future<void> deleteStruttura(String id) async {
+    await struttureRef.doc(id).delete();
+  }
+
+  Future<List<Struttura>> getStrutture() async {
+    final snapshot = await struttureRef.get();
+    return snapshot.docs
+        .map((doc) => Struttura.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+        .toList();
+  }
+
+  Future<Struttura?> getStrutturaById(String id) async {
+    final doc = await struttureRef.doc(id).get();
+    if (!doc.exists) return null;
+    return Struttura.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+  }
+}

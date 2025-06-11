@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/user.dart';
+import '../collections/user.dart';
 
 class UserDao {
   final _usersRef = FirebaseFirestore.instance.collection('utenti');

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/carta.dart';
+import '../collections//carta.dart';
 
 class CartaDao {
   final _ref = FirebaseFirestore.instance.collection('carte');

@@ -1,4 +1,4 @@
-import '../data/models/carta.dart';
+import '../data/collections/carta.dart';
 import '../data/dao/carta_dao.dart';
 
 class CartaRepository {

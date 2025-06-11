@@ -1,4 +1,4 @@
-import '../data/models/user.dart';
+import '../data/collections/user.dart';
 import '../data/dao/user_dao.dart';
 
 class UserRepository {
