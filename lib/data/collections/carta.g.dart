@@ -6,7 +6,7 @@ part of 'carta.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Carta _$CartaFromJson(Map<String, dynamic> json) => Carta(
+_$CartaImpl _$$CartaImplFromJson(Map<String, dynamic> json) => _$CartaImpl(
   id: json['id'] as String,
   userId: json['userId'] as String,
   cardHolderName: json['cardHolderName'] as String,
@@ -17,16 +17,17 @@ Carta _$CartaFromJson(Map<String, dynamic> json) => Carta(
   provider: $enumDecode(_$CardProviderEnumMap, json['provider']),
 );
 
-Map<String, dynamic> _$CartaToJson(Carta instance) => <String, dynamic>{
-  'id': instance.id,
-  'userId': instance.userId,
-  'cardHolderName': instance.cardHolderName,
-  'cardNumber': instance.cardNumber,
-  'expirationMonth': instance.expirationMonth,
-  'expirationYear': instance.expirationYear,
-  'cvv': instance.cvv,
-  'provider': _$CardProviderEnumMap[instance.provider]!,
-};
+Map<String, dynamic> _$$CartaImplToJson(_$CartaImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'userId': instance.userId,
+      'cardHolderName': instance.cardHolderName,
+      'cardNumber': instance.cardNumber,
+      'expirationMonth': instance.expirationMonth,
+      'expirationYear': instance.expirationYear,
+      'cvv': instance.cvv,
+      'provider': _$CardProviderEnumMap[instance.provider]!,
+    };
 
 const _$CardProviderEnumMap = {
   CardProvider.VISA: 'VISA',

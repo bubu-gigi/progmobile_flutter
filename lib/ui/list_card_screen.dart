@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:progmobile_flutter/ui/add_card_screen.dart';
-import '../viewmodels/card_viewmodel.dart';
+import '../viewmodels/carta_viewmodel.dart';
 
 class CardListScreen extends ConsumerWidget {
   const CardListScreen({super.key});

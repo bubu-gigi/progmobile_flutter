@@ -1,43 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:progmobile_flutter/viewmodels/state/register_state.dart';
+import '../data/collections/user.dart';
+import '../repositories/user_repository.dart';
 
-class RegisterState {
-  final String nome;
-  final String cognome;
-  final String email;
-  final String codiceFiscale;
-  final String password;
-  final bool isLoading;
+final userRepositoryProvider = Provider((ref) => UserRepository());
 
-  RegisterState({
-    this.nome = '',
-    this.cognome = '',
-    this.email = '',
-    this.codiceFiscale = '',
-    this.password = '',
-    this.isLoading = false,
-  });
-
-  RegisterState copyWith({
-    String? nome,
-    String? cognome,
-    String? email,
-    String? codiceFiscale,
-    String? password,
-    bool? isLoading,
-  }) {
-    return RegisterState(
-      nome: nome ?? this.nome,
-      cognome: cognome ?? this.cognome,
-      email: email ?? this.email,
-      codiceFiscale: codiceFiscale ?? this.codiceFiscale,
-      password: password ?? this.password,
-      isLoading: isLoading ?? this.isLoading,
-    );
-  }
-}
+final registerViewModelProvider = StateNotifierProvider<RegisterViewModel, RegisterState>(
+      (ref) => RegisterViewModel(ref.read(userRepositoryProvider)),
+);
 
 class RegisterViewModel extends StateNotifier<RegisterState> {
-  RegisterViewModel() : super(RegisterState());
+  final UserRepository _userRepository;
+
+  RegisterViewModel(this._userRepository) : super(RegisterState());
 
   void setNome(String nome) => state = state.copyWith(nome: nome);
   void setCognome(String cognome) => state = state.copyWith(cognome: cognome);
@@ -47,12 +22,28 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
 
   Future<void> register() async {
     state = state.copyWith(isLoading: true);
-    await Future.delayed(const Duration(seconds: 2));
-    state = state.copyWith(isLoading: false);
-    // Gestisci il risultato della registrazione (success/fail)
+
+    try {
+      final tempUser = User(
+        id: '', // sarà assegnato nel repository
+        codiceFiscale: state.codiceFiscale,
+        cognome: state.cognome,
+        email: state.email,
+        name: state.nome,
+        password: state.password,
+        ruolo: 'Giocatore',
+        preferiti: [],
+      );
+
+      await _userRepository.registerWithEmailAndPassword(
+        tempUser,
+        state.email,
+        state.password,
+      );
+    } catch (e) {
+      print('Errore durante la registrazione: $e');
+    } finally {
+      state = state.copyWith(isLoading: false);
+    }
   }
 }
-
-final registerViewModelProvider = StateNotifierProvider<RegisterViewModel, RegisterState>(
-      (ref) => RegisterViewModel(),
-);

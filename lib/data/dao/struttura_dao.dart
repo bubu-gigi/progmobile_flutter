@@ -7,8 +7,8 @@ class StrutturaDao {
 
   Future<void> addStruttura(Struttura struttura) async {
     final docRef = struttureRef.doc();
-    struttura.id = docRef.id;
-    await docRef.set(struttura.toJson());
+    final strutturaWithId = struttura.copyWith(id: docRef.id);
+    await docRef.set(strutturaWithId.toJson());
   }
 
   Future<void> updateStruttura(Struttura struttura) async {
@@ -26,17 +26,15 @@ class StrutturaDao {
   Future<List<Struttura>> getStrutture() async {
     final snapshot = await struttureRef.get();
     return snapshot.docs.map((doc) {
-      final struttura = Struttura.fromJson(doc.data() as Map<String, dynamic>);
-      struttura.id = doc.id;
-      return struttura;
+      return Struttura.fromJson(doc.data() as Map<String, dynamic>)
+          .copyWith(id: doc.id);
     }).toList();
   }
 
   Future<Struttura?> getStrutturaById(String id) async {
     final doc = await struttureRef.doc(id).get();
     if (!doc.exists) return null;
-    final struttura = Struttura.fromJson(doc.data() as Map<String, dynamic>);
-    struttura.id = doc.id;
-    return struttura;
+    return Struttura.fromJson(doc.data() as Map<String, dynamic>)
+        .copyWith(id: doc.id);
   }
 }

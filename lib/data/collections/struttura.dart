@@ -1,28 +1,21 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:progmobile_flutter/data/collections/enums/sport.dart';
 
+part 'struttura.freezed.dart';
 part 'struttura.g.dart';
 
-@JsonSerializable()
-class Struttura {
-  String id;
-  final String nome;
-  final String indirizzo;
-  final String citta;
-  final double latitudine;
-  final double longitudine;
-  final List<Sport> sportPraticabili;
+@freezed
+class Struttura with _$Struttura {
+  const factory Struttura({
+    @Default('') String id,
+    required String nome,
+    required String indirizzo,
+    required String citta,
+    required double latitudine,
+    required double longitudine,
+    required List<Sport> sportPraticabili,
+  }) = _Struttura;
 
-  Struttura({
-    this.id = '',
-    required this.nome,
-    required this.indirizzo,
-    required this.citta,
-    required this.latitudine,
-    required this.longitudine,
-    required this.sportPraticabili,
-  });
-
-  factory Struttura.fromJson(Map<String, dynamic> json) => _$StrutturaFromJson(json);
-  Map<String, dynamic> toJson() => _$StrutturaToJson(this);
+  factory Struttura.fromJson(Map<String, dynamic> json) =>
+      _$StrutturaFromJson(json);
 }

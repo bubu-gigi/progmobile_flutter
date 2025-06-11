@@ -1,30 +1,21 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'enums/card_provider.dart';
 
+part 'carta.freezed.dart';
 part 'carta.g.dart';
 
-@JsonSerializable()
-class Carta {
-  String id;
-  final String userId;
-  final String cardHolderName;
-  final String cardNumber;
-  final int expirationMonth;
-  final int expirationYear;
-  final String cvv;
-  final CardProvider provider;
-
-  Carta({
-    required this.id,
-    required this.userId,
-    required this.cardHolderName,
-    required this.cardNumber,
-    required this.expirationMonth,
-    required this.expirationYear,
-    required this.cvv,
-    required this.provider,
-  });
+@freezed
+class Carta with _$Carta {
+  const factory Carta({
+    required String id,
+    required String userId,
+    required String cardHolderName,
+    required String cardNumber,
+    required int expirationMonth,
+    required int expirationYear,
+    required String cvv,
+    required CardProvider provider,
+  }) = _Carta;
 
   factory Carta.fromJson(Map<String, dynamic> json) => _$CartaFromJson(json);
-  Map<String, dynamic> toJson() => _$CartaToJson(this);
 }

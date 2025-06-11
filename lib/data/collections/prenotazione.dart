@@ -1,29 +1,21 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'prenotazione.freezed.dart';
 part 'prenotazione.g.dart';
 
-@JsonSerializable()
-class Prenotazione {
-  String id;
-  final String userId;
-  final String strutturaId;
-  final String campoId;
-  final String data;
-  final String orarioInizio;
-  final String orarioFine;
-  final bool pubblica;
+@freezed
+class Prenotazione with _$Prenotazione {
+  const factory Prenotazione({
+    @Default('') String id,
+    required String userId,
+    required String strutturaId,
+    required String campoId,
+    required String data,
+    required String orarioInizio,
+    required String orarioFine,
+    @Default(false) bool pubblica,
+  }) = _Prenotazione;
 
-  Prenotazione({
-    this.id = '',
-    required this.userId,
-    required this.strutturaId,
-    required this.campoId,
-    required this.data,
-    required this.orarioInizio,
-    required this.orarioFine,
-    this.pubblica = false,
-  });
-
-  factory Prenotazione.fromJson(Map<String, dynamic> json) => _$PrenotazioneFromJson(json);
-  Map<String, dynamic> toJson() => _$PrenotazioneToJson(this);
+  factory Prenotazione.fromJson(Map<String, dynamic> json) =>
+      _$PrenotazioneFromJson(json);
 }

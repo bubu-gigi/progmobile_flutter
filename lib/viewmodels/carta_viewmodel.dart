@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final cardViewModelProvider = ChangeNotifierProvider((ref) => CardViewModel());
+final cartaViewModelProvider = ChangeNotifierProvider((ref) => CardViewModel());
+
 class PaymentCard {
   final String number;
   final String holder;

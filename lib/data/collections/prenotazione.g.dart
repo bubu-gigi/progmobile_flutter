@@ -6,18 +6,19 @@ part of 'prenotazione.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Prenotazione _$PrenotazioneFromJson(Map<String, dynamic> json) => Prenotazione(
-  id: json['id'] as String? ?? '',
-  userId: json['userId'] as String,
-  strutturaId: json['strutturaId'] as String,
-  campoId: json['campoId'] as String,
-  data: json['data'] as String,
-  orarioInizio: json['orarioInizio'] as String,
-  orarioFine: json['orarioFine'] as String,
-  pubblica: json['pubblica'] as bool? ?? false,
-);
+_$PrenotazioneImpl _$$PrenotazioneImplFromJson(Map<String, dynamic> json) =>
+    _$PrenotazioneImpl(
+      id: json['id'] as String? ?? '',
+      userId: json['userId'] as String,
+      strutturaId: json['strutturaId'] as String,
+      campoId: json['campoId'] as String,
+      data: json['data'] as String,
+      orarioInizio: json['orarioInizio'] as String,
+      orarioFine: json['orarioFine'] as String,
+      pubblica: json['pubblica'] as bool? ?? false,
+    );
 
-Map<String, dynamic> _$PrenotazioneToJson(Prenotazione instance) =>
+Map<String, dynamic> _$$PrenotazioneImplToJson(_$PrenotazioneImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'userId': instance.userId,

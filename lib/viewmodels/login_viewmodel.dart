@@ -1,35 +1,39 @@
-// lib/viewmodels/login_viewmodel.dart
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:progmobile_flutter/viewmodels/state/login_state.dart';
+import '../repositories/user_repository.dart';
 
-final loginViewModelProvider = ChangeNotifierProvider((ref) => LoginViewModel());
+final userRepositoryProvider = Provider((ref) => UserRepository());
 
-class LoginViewModel extends ChangeNotifier {
-  String _email = '';
-  String _password = '';
-  bool _isLoading = false;
+final loginViewModelProvider = StateNotifierProvider<LoginViewModel, LoginState>(
+      (ref) => LoginViewModel(ref.read(userRepositoryProvider)),
+);
 
-  String get email => _email;
-  String get password => _password;
-  bool get isLoading => _isLoading;
+class LoginViewModel extends StateNotifier<LoginState> {
+  final UserRepository _userRepository;
 
-  void setEmail(String value) {
-    _email = value;
-    notifyListeners();
+  LoginViewModel(this._userRepository) : super(LoginState());
+
+  void setEmail(String email) {
+    state = state.copyWith(email: email);
   }
 
-  void setPassword(String value) {
-    _password = value;
-    notifyListeners();
+  void setPassword(String password) {
+    state = state.copyWith(password: password);
   }
 
   Future<void> login() async {
-    _isLoading = true;
-    notifyListeners();
+    state = state.copyWith(isLoading: true);
 
-    await Future.delayed(const Duration(seconds: 2)); // Simula chiamata
-
-    _isLoading = false;
-    notifyListeners();
+    try {
+      final user = await _userRepository.loginWithEmailAndPassword(
+        state.email,
+        state.password,
+      );
+      print('Login success: ${user?.uid}');
+    } catch (e) {
+      print('Login failed: $e');
+    } finally {
+      state = state.copyWith(isLoading: false);
+    }
   }
 }

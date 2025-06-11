@@ -6,8 +6,8 @@ class CartaDao {
 
   Future<void> createCarta(Carta carta) async {
     final doc = _ref.doc();
-    carta.id = doc.id;
-    await doc.set(carta.toJson());
+    final cartaWithId = carta.copyWith(id: doc.id);
+    await doc.set(cartaWithId.toJson());
   }
 
   Future<void> updateCarta(Carta carta) async {
@@ -24,18 +24,14 @@ class CartaDao {
   Future<List<Carta>> getCarteByUserId(String userId) async {
     final query = await _ref.where('userId', isEqualTo: userId).get();
     return query.docs.map((doc) {
-      final carta = Carta.fromJson(doc.data());
-      carta.id = doc.id;
-      return carta;
+      return Carta.fromJson(doc.data()).copyWith(id: doc.id);
     }).toList();
   }
 
   Stream<List<Carta>> watchCarteByUserId(String userId) {
     return _ref.where('userId', isEqualTo: userId).snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        final carta = Carta.fromJson(doc.data());
-        carta.id = doc.id;
-        return carta;
+        return Carta.fromJson(doc.data()).copyWith(id: doc.id);
       }).toList();
     });
   }

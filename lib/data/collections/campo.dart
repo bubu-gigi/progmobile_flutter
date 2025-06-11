@@ -1,32 +1,23 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'template_giornaliero.dart';
 import 'enums/sport.dart';
 import 'enums/tipologia_terreno.dart';
 
+part 'campo.freezed.dart';
 part 'campo.g.dart';
 
-@JsonSerializable(explicitToJson: true)
-class Campo {
-  String id;
-  final String nomeCampo;
-  final Sport sport;
-  final TipologiaTerreno tipologiaTerreno;
-  final double prezzoOrario;
-  final int numeroGiocatori;
-  final bool spogliatoi;
-  final List<TemplateGiornaliero> disponibilitaSettimanale;
-
-  Campo({
-    this.id = '',
-    required this.nomeCampo,
-    required this.sport,
-    this.tipologiaTerreno = TipologiaTerreno.ERBA_SINTETICA,
-    this.prezzoOrario = 0.0,
-    this.numeroGiocatori = 0,
-    this.spogliatoi = false,
-    this.disponibilitaSettimanale = const [],
-  });
+@freezed
+class Campo with _$Campo {
+  const factory Campo({
+    @Default('') String id,
+    required String nomeCampo,
+    required Sport sport,
+    @Default(TipologiaTerreno.ERBA_SINTETICA) TipologiaTerreno tipologiaTerreno,
+    @Default(0.0) double prezzoOrario,
+    @Default(0) int numeroGiocatori,
+    @Default(false) bool spogliatoi,
+    @Default([]) List<TemplateGiornaliero> disponibilitaSettimanale,
+  }) = _Campo;
 
   factory Campo.fromJson(Map<String, dynamic> json) => _$CampoFromJson(json);
-  Map<String, dynamic> toJson() => _$CampoToJson(this);
 }

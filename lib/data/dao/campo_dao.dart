@@ -11,8 +11,8 @@ class CampoDao {
         .collection('campi')
         .doc();
 
-    campo.id = ref.id;
-    await ref.set(campo.toJson());
+    final campoWithId = campo.copyWith(id: ref.id);
+    await ref.set(campoWithId.toJson());
   }
 
   Future<void> updateCampo(String strutturaId, Campo campo) async {
@@ -46,10 +46,7 @@ class CampoDao {
         .get();
 
     return snapshot.docs
-        .map((doc) {
-      final campo = Campo.fromJson(doc.data());
-      campo.id = doc.id;
-      return campo;
-    }).toList();
+        .map((doc) => Campo.fromJson(doc.data()).copyWith(id: doc.id))
+        .toList();
   }
 }

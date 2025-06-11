@@ -6,7 +6,7 @@ part of 'campo.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Campo _$CampoFromJson(Map<String, dynamic> json) => Campo(
+_$CampoImpl _$$CampoImplFromJson(Map<String, dynamic> json) => _$CampoImpl(
   id: json['id'] as String? ?? '',
   nomeCampo: json['nomeCampo'] as String,
   sport: $enumDecode(_$SportEnumMap, json['sport']),
@@ -26,18 +26,17 @@ Campo _$CampoFromJson(Map<String, dynamic> json) => Campo(
       const [],
 );
 
-Map<String, dynamic> _$CampoToJson(Campo instance) => <String, dynamic>{
-  'id': instance.id,
-  'nomeCampo': instance.nomeCampo,
-  'sport': _$SportEnumMap[instance.sport]!,
-  'tipologiaTerreno': _$TipologiaTerrenoEnumMap[instance.tipologiaTerreno]!,
-  'prezzoOrario': instance.prezzoOrario,
-  'numeroGiocatori': instance.numeroGiocatori,
-  'spogliatoi': instance.spogliatoi,
-  'disponibilitaSettimanale': instance.disponibilitaSettimanale
-      .map((e) => e.toJson())
-      .toList(),
-};
+Map<String, dynamic> _$$CampoImplToJson(_$CampoImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'nomeCampo': instance.nomeCampo,
+      'sport': _$SportEnumMap[instance.sport]!,
+      'tipologiaTerreno': _$TipologiaTerrenoEnumMap[instance.tipologiaTerreno]!,
+      'prezzoOrario': instance.prezzoOrario,
+      'numeroGiocatori': instance.numeroGiocatori,
+      'spogliatoi': instance.spogliatoi,
+      'disponibilitaSettimanale': instance.disponibilitaSettimanale,
+    };
 
 const _$SportEnumMap = {
   Sport.CALCIO5: 'CALCIO5',

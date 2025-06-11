@@ -7,9 +7,7 @@ class UserDao {
   Future<User?> getUserById(String id) async {
     final doc = await _usersRef.doc(id).get();
     if (!doc.exists) return null;
-    final user = User.fromJson(doc.data()!);
-    user.id = doc.id;
-    return user;
+    return User.fromJson(doc.data()!).copyWith(id: doc.id);
   }
 
   Future<void> createUser(User user) async {
@@ -30,9 +28,7 @@ class UserDao {
   Stream<List<User>> watchAllUsers() {
     return _usersRef.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        final user = User.fromJson(doc.data());
-        user.id = doc.id;
-        return user;
+        return User.fromJson(doc.data()).copyWith(id: doc.id);
       }).toList();
     });
   }
