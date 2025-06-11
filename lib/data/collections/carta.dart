@@ -1,7 +1,11 @@
-enum CardProvider { VISA, MASTERCARD, AMEX }
+import 'package:json_annotation/json_annotation.dart';
+import 'enums/card_provider.dart';
 
+part 'carta.g.dart';
+
+@JsonSerializable()
 class Carta {
-  final String id;
+  String id;
   final String userId;
   final String cardHolderName;
   final String cardNumber;
@@ -21,39 +25,6 @@ class Carta {
     required this.provider,
   });
 
-  factory Carta.fromFirestore(Map<String, dynamic> data, String id) {
-    return Carta(
-      id: id,
-      userId: data['userId'] ?? '',
-      cardHolderName: data['cardHolderName'] ?? '',
-      cardNumber: data['cardNumber'] ?? '',
-      expirationMonth: data['expirationMonth'] ?? 1,
-      expirationYear: data['expirationYear'] ?? 2025,
-      cvv: data['cvv'] ?? '',
-      provider: _parseProvider(data['provider']),
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'userId': userId,
-      'cardHolderName': cardHolderName,
-      'cardNumber': cardNumber,
-      'expirationMonth': expirationMonth,
-      'expirationYear': expirationYear,
-      'cvv': cvv,
-      'provider': provider.name,
-    };
-  }
-
-  static CardProvider _parseProvider(String? raw) {
-    switch (raw) {
-      case 'MASTERCARD':
-        return CardProvider.MASTERCARD;
-      case 'AMEX':
-        return CardProvider.AMEX;
-      default:
-        return CardProvider.VISA;
-    }
-  }
+  factory Carta.fromJson(Map<String, dynamic> json) => _$CartaFromJson(json);
+  Map<String, dynamic> toJson() => _$CartaToJson(this);
 }

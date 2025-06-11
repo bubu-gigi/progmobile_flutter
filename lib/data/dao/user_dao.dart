@@ -7,15 +7,20 @@ class UserDao {
   Future<User?> getUserById(String id) async {
     final doc = await _usersRef.doc(id).get();
     if (!doc.exists) return null;
-    return User.fromFirestore(doc.data()!, doc.id);
+    final user = User.fromJson(doc.data()!);
+    user.id = doc.id;
+    return user;
   }
 
   Future<void> createUser(User user) async {
-    await _usersRef.doc(user.id).set(user.toMap());
+    await _usersRef.doc(user.id).set(user.toJson());
   }
 
   Future<void> updateUser(User user) async {
-    await _usersRef.doc(user.id).update(user.toMap());
+    if (user.id.isEmpty) {
+      throw ArgumentError('User ID is required for update.');
+    }
+    await _usersRef.doc(user.id).update(user.toJson());
   }
 
   Future<void> deleteUser(String id) async {
@@ -25,7 +30,9 @@ class UserDao {
   Stream<List<User>> watchAllUsers() {
     return _usersRef.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        return User.fromFirestore(doc.data(), doc.id);
+        final user = User.fromJson(doc.data());
+        user.id = doc.id;
+        return user;
       }).toList();
     });
   }

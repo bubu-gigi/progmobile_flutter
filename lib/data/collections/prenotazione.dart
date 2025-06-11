@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'prenotazione.g.dart';
+
+@JsonSerializable()
 class Prenotazione {
   String id;
   final String userId;
@@ -19,28 +24,6 @@ class Prenotazione {
     this.pubblica = false,
   });
 
-  factory Prenotazione.fromMap(Map<String, dynamic> map, String id) {
-    return Prenotazione(
-      id: id,
-      userId: map['userId'] ?? '',
-      strutturaId: map['strutturaId'] ?? '',
-      campoId: map['campoId'] ?? '',
-      data: map['data'] ?? '',
-      orarioInizio: map['orarioInizio'] ?? '',
-      orarioFine: map['orarioFine'] ?? '',
-      pubblica: map['pubblica'] ?? false,
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'userId': userId,
-      'strutturaId': strutturaId,
-      'campoId': campoId,
-      'data': data,
-      'orarioInizio': orarioInizio,
-      'orarioFine': orarioFine,
-      'pubblica': pubblica,
-    };
-  }
+  factory Prenotazione.fromJson(Map<String, dynamic> json) => _$PrenotazioneFromJson(json);
+  Map<String, dynamic> toJson() => _$PrenotazioneToJson(this);
 }

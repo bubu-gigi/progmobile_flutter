@@ -1,8 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import './enums/sport.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:progmobile_flutter/data/collections/enums/sport.dart';
 
+part 'struttura.g.dart';
+
+@JsonSerializable()
 class Struttura {
-  final String id;
+  String id;
   final String nome;
   final String indirizzo;
   final String citta;
@@ -20,30 +23,6 @@ class Struttura {
     required this.sportPraticabili,
   });
 
-  factory Struttura.fromMap(Map<String, dynamic> map, String id) {
-    return Struttura(
-      id: id,
-      nome: map['nome'] ?? '',
-      indirizzo: map['indirizzo'] ?? '',
-      citta: map['citta'] ?? '',
-      latitudine: (map['latitudine'] ?? 0).toDouble(),
-      longitudine: (map['longitudine'] ?? 0).toDouble(),
-      sportPraticabili: (map['sportPraticabili'] as List<dynamic>?)
-          ?.map((e) => SportExtension.fromString(e))
-          .whereType<Sport>()
-          .toList() ??
-          [],
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'nome': nome,
-      'indirizzo': indirizzo,
-      'citta': citta,
-      'latitudine': latitudine,
-      'longitudine': longitudine,
-      'sportPraticabili': sportPraticabili.map((e) => e.name).toList(),
-    };
-  }
+  factory Struttura.fromJson(Map<String, dynamic> json) => _$StrutturaFromJson(json);
+  Map<String, dynamic> toJson() => _$StrutturaToJson(this);
 }

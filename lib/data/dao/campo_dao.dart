@@ -2,27 +2,35 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../collections/campo.dart';
 
 class CampoDao {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   Future<void> addCampo(String strutturaId, Campo campo) async {
-    final ref = FirebaseFirestore.instance
+    final ref = _firestore
         .collection('strutture')
         .doc(strutturaId)
         .collection('campi')
         .doc();
+
     campo.id = ref.id;
-    await ref.set(campo.toMap());
+    await ref.set(campo.toJson());
   }
 
   Future<void> updateCampo(String strutturaId, Campo campo) async {
-    final ref = FirebaseFirestore.instance
+    if (campo.id.isEmpty) {
+      throw ArgumentError('Campo ID is required for update.');
+    }
+
+    final ref = _firestore
         .collection('strutture')
         .doc(strutturaId)
         .collection('campi')
         .doc(campo.id);
-    await ref.set(campo.toMap());
+
+    await ref.set(campo.toJson());
   }
 
   Future<void> deleteCampo(String strutturaId, String campoId) async {
-    await FirebaseFirestore.instance
+    await _firestore
         .collection('strutture')
         .doc(strutturaId)
         .collection('campi')
@@ -31,14 +39,17 @@ class CampoDao {
   }
 
   Future<List<Campo>> getCampi(String strutturaId) async {
-    final snapshot = await FirebaseFirestore.instance
+    final snapshot = await _firestore
         .collection('strutture')
         .doc(strutturaId)
         .collection('campi')
         .get();
 
     return snapshot.docs
-        .map((doc) => Campo.fromMap(doc.data(), doc.id))
-        .toList();
+        .map((doc) {
+      final campo = Campo.fromJson(doc.data());
+      campo.id = doc.id;
+      return campo;
+    }).toList();
   }
 }

@@ -1,5 +1,10 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'template_giornaliero.g.dart';
+
+@JsonSerializable()
 class TemplateGiornaliero {
-  final int giornoSettimana; 
+  final int giornoSettimana;
   final String orarioApertura;
   final String orarioChiusura;
 
@@ -9,19 +14,8 @@ class TemplateGiornaliero {
     required this.orarioChiusura,
   });
 
-  factory TemplateGiornaliero.fromMap(Map<String, dynamic> map) {
-    return TemplateGiornaliero(
-      giornoSettimana: map['giornoSettimana'],
-      orarioApertura: map['orarioApertura'],
-      orarioChiusura: map['orarioChiusura'],
-    );
-  }
+  factory TemplateGiornaliero.fromJson(Map<String, dynamic> json) =>
+      _$TemplateGiornalieroFromJson(json);
 
-  Map<String, dynamic> toMap() {
-    return {
-      'giornoSettimana': giornoSettimana,
-      'orarioApertura': orarioApertura,
-      'orarioChiusura': orarioChiusura,
-    };
-  }
+  Map<String, dynamic> toJson() => _$TemplateGiornalieroToJson(this);
 }

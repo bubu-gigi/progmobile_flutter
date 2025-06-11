@@ -7,12 +7,16 @@ class StrutturaDao {
 
   Future<void> addStruttura(Struttura struttura) async {
     final docRef = struttureRef.doc();
-    await docRef.set(struttura.toMap());
+    struttura.id = docRef.id;
+    await docRef.set(struttura.toJson());
   }
 
   Future<void> updateStruttura(Struttura struttura) async {
+    if (struttura.id.isEmpty) {
+      throw ArgumentError('Struttura ID is required for update.');
+    }
     final docRef = struttureRef.doc(struttura.id);
-    await docRef.set(struttura.toMap());
+    await docRef.set(struttura.toJson());
   }
 
   Future<void> deleteStruttura(String id) async {
@@ -21,14 +25,18 @@ class StrutturaDao {
 
   Future<List<Struttura>> getStrutture() async {
     final snapshot = await struttureRef.get();
-    return snapshot.docs
-        .map((doc) => Struttura.fromMap(doc.data() as Map<String, dynamic>, doc.id))
-        .toList();
+    return snapshot.docs.map((doc) {
+      final struttura = Struttura.fromJson(doc.data() as Map<String, dynamic>);
+      struttura.id = doc.id;
+      return struttura;
+    }).toList();
   }
 
   Future<Struttura?> getStrutturaById(String id) async {
     final doc = await struttureRef.doc(id).get();
     if (!doc.exists) return null;
-    return Struttura.fromMap(doc.data() as Map<String, dynamic>, doc.id);
+    final struttura = Struttura.fromJson(doc.data() as Map<String, dynamic>);
+    struttura.id = doc.id;
+    return struttura;
   }
 }
