@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:progmobile_flutter/ui/edit_profile_screen.dart';
 import 'package:progmobile_flutter/ui/home_giocatore_screen.dart';
 import '../ui/login_screen.dart';
 import '../ui/register_screen.dart';
@@ -11,6 +12,7 @@ class AppRoutes {
   static const cards = '/cards';
   static const addCard = '/cards/add';
   static const homeGiocatore = '/home';
+  static const editProfile = '/edit-profile';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -24,6 +26,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const AddCardScreen());
       case homeGiocatore:
         return MaterialPageRoute(builder: (_) => const HomeGiocatoreScreen());
+      case editProfile:
+        return MaterialPageRoute(builder: (_) => const EditProfileScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(

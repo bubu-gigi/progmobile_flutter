@@ -9,11 +9,23 @@ class HomeGiocatoreScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Benvenuto Giocatore')),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.pushNamed(context, AppRoutes.cards);
-          },
-          child: const Text('Gestisci le tue carte'),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.cards);
+              },
+              child: const Text('Gestisci le tue carte'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.editProfile);
+              },
+              child: const Text('Modifica il tuo profilo'),
+            ),
+          ],
         ),
       ),
     );
