@@ -4,7 +4,7 @@ import '../data/dao/carta_dao.dart';
 class CartaRepository {
   final CartaDao _dao = CartaDao();
 
-  Future<void> addCarta(Carta carta) => _dao.createCarta(carta);
+  Future<Carta> addCarta(Carta carta) => _dao.createCarta(carta);
 
   Future<void> updateCarta(Carta carta) => _dao.updateCarta(carta);
 

@@ -4,10 +4,11 @@ import '../collections/carta.dart';
 class CartaDao {
   final _ref = FirebaseFirestore.instance.collection('carte');
 
-  Future<void> createCarta(Carta carta) async {
+  Future<Carta> createCarta(Carta carta) async {
     final doc = _ref.doc();
     final cartaWithId = carta.copyWith(id: doc.id);
     await doc.set(cartaWithId.toJson());
+    return cartaWithId;
   }
 
   Future<void> updateCarta(Carta carta) async {

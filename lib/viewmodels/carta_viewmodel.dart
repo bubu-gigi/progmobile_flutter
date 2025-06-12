@@ -54,8 +54,8 @@ class CardViewModel extends StateNotifier<List<Carta>> {
       provider: CardProvider.VISA,
     );
 
-    await _repository.addCarta(carta);
-    state = [...state, carta];
+    final savedCarta = await _repository.addCarta(carta);
+    state = [...state, savedCarta];
   }
 
   Future<void> removeCard(int index) async {
