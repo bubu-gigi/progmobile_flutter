@@ -5,6 +5,7 @@ class RegisterState {
   final String codiceFiscale;
   final String password;
   final bool isLoading;
+  final bool success;
 
   RegisterState({
     this.nome = '',
@@ -13,6 +14,7 @@ class RegisterState {
     this.codiceFiscale = '',
     this.password = '',
     this.isLoading = false,
+    this.success = false,
   });
 
   RegisterState copyWith({
@@ -22,6 +24,7 @@ class RegisterState {
     String? codiceFiscale,
     String? password,
     bool? isLoading,
+    bool? success,
   }) {
     return RegisterState(
       nome: nome ?? this.nome,
@@ -30,6 +33,7 @@ class RegisterState {
       codiceFiscale: codiceFiscale ?? this.codiceFiscale,
       password: password ?? this.password,
       isLoading: isLoading ?? this.isLoading,
+      success: success ?? this.success,
     );
   }
 }

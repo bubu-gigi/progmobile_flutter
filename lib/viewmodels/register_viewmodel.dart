@@ -40,6 +40,8 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
         state.email,
         state.password,
       );
+
+        state = state.copyWith(isLoading: false, success: true);
     } catch (e) {
       print('Errore durante la registrazione: $e');
     } finally {
