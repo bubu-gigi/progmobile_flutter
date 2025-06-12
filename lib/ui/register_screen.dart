@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:progmobile_flutter/core/routes.dart';
+import 'package:progmobile_flutter/viewmodels/state/register_state.dart';
 import '../viewmodels/register_viewmodel.dart';
 
 class RegisterScreen extends ConsumerWidget {
@@ -11,11 +12,11 @@ class RegisterScreen extends ConsumerWidget {
     final vm = ref.watch(registerViewModelProvider);
     final notifier = ref.read(registerViewModelProvider.notifier);
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (vm.success) {
-        Navigator.pushReplacementNamed(context, AppRoutes.homeGiocatore);
-      }
-    });
+     ref.listen<RegisterState>(registerViewModelProvider, (prev, next) {
+        if (next.success && prev?.success != true) {
+          Navigator.pushReplacementNamed(context, AppRoutes.homeGiocatore);
+        }
+      });
 
     return Scaffold(
       appBar: AppBar(title: const Text('Register')),

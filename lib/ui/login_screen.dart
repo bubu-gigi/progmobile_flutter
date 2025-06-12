@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:progmobile_flutter/core/routes.dart';
+import 'package:progmobile_flutter/viewmodels/state/login_state.dart';
 import '../viewmodels/login_viewmodel.dart';
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
-
+  
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(loginViewModelProvider);
     final vm = ref.read(loginViewModelProvider.notifier);
+
+    ref.listen<LoginState>(loginViewModelProvider, (prev, next) {
+      if (next.success && prev?.success != true) {
+        Navigator.pushReplacementNamed(context, AppRoutes.homeGiocatore);
+      } else if (next.error != null && next.error != prev?.error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(next.error!)),
+        );
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
@@ -31,19 +42,12 @@ class LoginScreen extends ConsumerWidget {
             state.isLoading
                 ? const CircularProgressIndicator()
                 : ElevatedButton(
-              onPressed: () async {
-                await vm.login();
-                if (context.mounted) {
-                  Navigator.pushReplacementNamed(
-                    context,
-                    AppRoutes.homeGiocatore,
-                  );
-                }
-              },
-              child: const Text('Login'),
-            ),
+                    onPressed: vm.login,
+                    child: const Text('Login'),
+                  ),
             TextButton(
-              onPressed: () => Navigator.pushNamed(context, '/register'),
+              onPressed: () =>
+                  Navigator.pushNamed(context, AppRoutes.register),
               child: const Text("Don't have an account? Register"),
             ),
           ],

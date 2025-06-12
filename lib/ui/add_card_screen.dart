@@ -12,7 +12,7 @@ class AddCardScreen extends ConsumerStatefulWidget {
 class _AddCardScreenState extends ConsumerState<AddCardScreen> {
   final _numberController = TextEditingController();
   final _holderController = TextEditingController();
-  final _expiryController = TextEditingController(); // MM/AA
+  final _expiryController = TextEditingController();
   final _cvvController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();

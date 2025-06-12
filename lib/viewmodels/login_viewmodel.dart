@@ -22,18 +22,31 @@ class LoginViewModel extends StateNotifier<LoginState> {
   }
 
   Future<void> login() async {
-    state = state.copyWith(isLoading: true);
+  state = state.copyWith(isLoading: true, success: false, error: null);
 
-    try {
-      final user = await _userRepository.loginWithEmailAndPassword(
-        state.email,
-        state.password,
+  try {
+    final user = await _userRepository.loginWithEmailAndPassword(
+      state.email,
+      state.password,
+    );
+
+    if (user != null) {
+      state = state.copyWith(isLoading: false, success: true);
+    } else {
+      state = state.copyWith(
+        isLoading: false,
+        success: false,
+        error: 'Credenziali non valide',
       );
-      print('Login success: ${user?.uid}');
-    } catch (e) {
-      print('Login failed: $e');
-    } finally {
-      state = state.copyWith(isLoading: false);
     }
+  } catch (e) {
+    print('Login failed: $e');
+    state = state.copyWith(
+      isLoading: false,
+      success: false,
+      error: 'Login fallito: ${e.toString()}',
+    );
   }
+}
+
 }
