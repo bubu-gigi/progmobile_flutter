@@ -8,24 +8,32 @@ class CardListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(cardViewModelProvider);
+    final cards = ref.watch(cartaViewModelProvider);
+    final viewModel = ref.read(cartaViewModelProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Le tue carte')),
-      body: ListView.builder(
-        itemCount: viewModel.cards.length,
+      body: cards.isEmpty
+          ? const Center(child: Text('Nessuna carta disponibile'))
+          : ListView.builder(
+        itemCount: cards.length,
         itemBuilder: (context, index) {
-          final card = viewModel.cards[index];
+          final card = cards[index];
+          final last4 = card.cardNumber.length >= 4
+              ? card.cardNumber.substring(card.cardNumber.length - 4)
+              : card.cardNumber;
+
           return ListTile(
-            title: Text('**** **** **** ${card.number.substring(card.number.length - 4)}'),
-            subtitle: Text(card.holder),
+            title: Text('**** **** **** $last4'),
+            subtitle: Text(card.cardHolderName),
             trailing: IconButton(
               icon: const Icon(Icons.delete),
-              onPressed: () => ref.read(cardViewModelProvider).removeCard(index),
+              onPressed: () => viewModel.removeCard(index),
             ),
             onTap: () {
-              // Selezione della carta (potresti salvare l'indice o navigare)
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Carta selezionata: ${card.number}')));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Carta selezionata: **** **** **** $last4')),
+              );
             },
           );
         },
@@ -33,7 +41,9 @@ class CardListScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AddCardScreen()));
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const AddCardScreen()),
+          );
         },
       ),
     );

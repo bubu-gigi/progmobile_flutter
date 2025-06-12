@@ -25,7 +25,7 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
 
     try {
       final tempUser = User(
-        id: '', // sarà assegnato nel repository
+        id: '',
         codiceFiscale: state.codiceFiscale,
         cognome: state.cognome,
         email: state.email,

@@ -30,7 +30,8 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
               TextFormField(
                 controller: _holderController,
                 decoration: const InputDecoration(labelText: 'Nome intestatario'),
-                validator: (value) => value == null || value.isEmpty ? 'Campo obbligatorio' : null,
+                validator: (value) =>
+                value == null || value.isEmpty ? 'Campo obbligatorio' : null,
               ),
               TextFormField(
                 controller: _numberController,
@@ -65,7 +66,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    ref.read(cardViewModelProvider).addCard(
+                    ref.read(cartaViewModelProvider.notifier).addCard(
                       _numberController.text,
                       _holderController.text,
                       expiry: _expiryController.text,
@@ -75,7 +76,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                   }
                 },
                 child: const Text('Salva'),
-              )
+              ),
             ],
           ),
         ),

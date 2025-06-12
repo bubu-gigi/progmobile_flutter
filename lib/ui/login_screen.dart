@@ -1,4 +1,3 @@
-// lib/view/login_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:progmobile_flutter/core/routes.dart';
@@ -9,7 +8,8 @@ class LoginScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final vm = ref.watch(loginViewModelProvider);
+    final state = ref.watch(loginViewModelProvider);
+    final vm = ref.read(loginViewModelProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
@@ -18,24 +18,27 @@ class LoginScreen extends ConsumerWidget {
         child: Column(
           children: [
             TextField(
-              onChanged: ref.read(loginViewModelProvider.notifier).setEmail,
+              onChanged: vm.setEmail,
               decoration: const InputDecoration(labelText: 'Email'),
             ),
             const SizedBox(height: 12),
             TextField(
-              onChanged: ref.read(loginViewModelProvider.notifier).setPassword,
+              onChanged: vm.setPassword,
               decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
             ),
             const SizedBox(height: 24),
-            vm.isLoading
+            state.isLoading
                 ? const CircularProgressIndicator()
                 : ElevatedButton(
               onPressed: () async {
-                  await ref.read(loginViewModelProvider).login();
-                  if (context.mounted) {
-                    Navigator.pushReplacementNamed(context, AppRoutes.homeGiocatore);
-                  }
+                await vm.login();
+                if (context.mounted) {
+                  Navigator.pushReplacementNamed(
+                    context,
+                    AppRoutes.homeGiocatore,
+                  );
+                }
               },
               child: const Text('Login'),
             ),

@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../collections/user.dart';
 
 class UserDao {
-  final _usersRef = FirebaseFirestore.instance.collection('utenti');
+  final _usersRef = FirebaseFirestore.instance.collection('users');
 
   Future<User?> getUserById(String id) async {
     final doc = await _usersRef.doc(id).get();
