@@ -4,13 +4,15 @@ import '../collections/campo.dart';
 class CampoDao {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> addCampo(String strutturaId, Campo campo) async {
-    final ref = _firestore
+  CollectionReference getCampiRef(String strutturaId) {
+    return _firestore
         .collection('strutture')
         .doc(strutturaId)
-        .collection('campi')
-        .doc();
+        .collection('campi');
+  }
 
+  Future<void> addCampo(String strutturaId, Campo campo) async {
+    final ref = getCampiRef(strutturaId).doc();
     final campoWithId = campo.copyWith(id: ref.id);
     await ref.set(campoWithId.toJson());
   }
@@ -20,33 +22,35 @@ class CampoDao {
       throw ArgumentError('Campo ID is required for update.');
     }
 
-    final ref = _firestore
-        .collection('strutture')
-        .doc(strutturaId)
-        .collection('campi')
-        .doc(campo.id);
+    final ref = getCampiRef(strutturaId).doc(campo.id);
 
-    await ref.set(campo.toJson());
+    try {
+      await ref.update(campo.toJson());
+    } on FirebaseException catch (e) {
+      if (e.code == 'not-found') {
+        throw Exception('Il campo con ID ${campo.id} non esiste e non può essere aggiornato.');
+      } else {
+        throw Exception('Errore durante l\'aggiornamento: ${e.message}');
+      }
+    }
   }
 
   Future<void> deleteCampo(String strutturaId, String campoId) async {
-    await _firestore
-        .collection('strutture')
-        .doc(strutturaId)
-        .collection('campi')
-        .doc(campoId)
-        .delete();
+    final ref = getCampiRef(strutturaId).doc(campoId);
+    final doc = await ref.get();
+
+    if (!doc.exists) {
+      throw Exception('Il campo con ID $campoId non esiste.');
+    }
+
+    await ref.delete();
   }
 
   Future<List<Campo>> getCampi(String strutturaId) async {
-    final snapshot = await _firestore
-        .collection('strutture')
-        .doc(strutturaId)
-        .collection('campi')
-        .get();
+    final snapshot = await getCampiRef(strutturaId).get();
 
     return snapshot.docs
-        .map((doc) => Campo.fromJson(doc.data()).copyWith(id: doc.id))
+        .map((doc) => Campo.fromJson(doc.data() as Map<String, dynamic>).copyWith(id: doc.id))
         .toList();
   }
 }

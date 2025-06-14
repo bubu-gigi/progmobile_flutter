@@ -11,6 +11,4 @@ class CartaRepository {
   Future<void> removeCarta(String id) => _dao.deleteCarta(id);
 
   Future<List<Carta>> fetchCarteForUser(String userId) => _dao.getCarteByUserId(userId);
-
-  Stream<List<Carta>> streamCarteForUser(String userId) => _dao.watchCarteByUserId(userId);
 }

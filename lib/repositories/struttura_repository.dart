@@ -1,4 +1,4 @@
-import '../data/collections//struttura.dart';
+import '../data/collections/struttura.dart';
 import '../data/dao/struttura_dao.dart';
 
 class StrutturaRepository {

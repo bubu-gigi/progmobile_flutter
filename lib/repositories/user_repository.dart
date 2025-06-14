@@ -11,7 +11,6 @@ class UserRepository {
   Future<void> createUser(User user) => _dao.createUser(user);
   Future<void> updateUser(User user) => _dao.updateUser(user);
   Future<void> deleteUser(String id) => _dao.deleteUser(id);
-  Stream<List<User>> watchUsers() => _dao.watchAllUsers();
 
   Future<fb.User?> loginWithEmailAndPassword(String email, String password) async {
     final cred = await _auth.signInWithEmailAndPassword(email: email, password: password);

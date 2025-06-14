@@ -25,6 +25,12 @@ class HomeGiocatoreScreen extends StatelessWidget {
               },
               child: const Text('Modifica il tuo profilo'),
             ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.editProfile);
+              },
+              child: const Text('Gestisci prenotazioni'),
+            ),
           ],
         ),
       ),
