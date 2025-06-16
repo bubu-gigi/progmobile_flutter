@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class UserForm extends StatelessWidget {
+class UserForm extends StatefulWidget {
   final String title;
   final bool isLoading;
   final void Function() onSubmit;
@@ -8,13 +8,12 @@ class UserForm extends StatelessWidget {
   final void Function(String) onCognomeChanged;
   final void Function(String) onEmailChanged;
   final void Function(String) onCodiceFiscaleChanged;
-  final void Function(String)? onPasswordChanged; 
+  final void Function(String)? onPasswordChanged;
   final String initialNome;
   final String initialCognome;
   final String initialEmail;
   final String initialCodiceFiscale;
   final String? initialPassword;
-  
 
   const UserForm({
     required this.title,
@@ -32,61 +31,90 @@ class UserForm extends StatelessWidget {
     this.onPasswordChanged,
     super.key,
   });
+
+  @override
+  State<UserForm> createState() => _UserFormState();
+}
+
+class _UserFormState extends State<UserForm> {
+  late final TextEditingController nomeController;
+  late final TextEditingController cognomeController;
+  late final TextEditingController emailController;
+  late final TextEditingController cfController;
+  TextEditingController? passwordController;
+
+  @override
+  void initState() {
+    super.initState();
+    nomeController = TextEditingController(text: widget.initialNome);
+    cognomeController = TextEditingController(text: widget.initialCognome);
+    emailController = TextEditingController(text: widget.initialEmail);
+    cfController = TextEditingController(text: widget.initialCodiceFiscale);
+
+    if (widget.onPasswordChanged != null) {
+      passwordController = TextEditingController(text: widget.initialPassword ?? '');
+    }
+  }
+
+  @override
+  void dispose() {
+    nomeController.dispose();
+    cognomeController.dispose();
+    emailController.dispose();
+    cfController.dispose();
+    passwordController?.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final nomeController = TextEditingController(text: initialNome);
-    final cognomeController = TextEditingController(text: initialCognome);
-    final emailController = TextEditingController(text: initialEmail);
-    final cfController = TextEditingController(text: initialCodiceFiscale);
-
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(title: Text(widget.title)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: ListView(
           children: [
             TextField(
               controller: nomeController,
-              onChanged: onNomeChanged,
+              onChanged: widget.onNomeChanged,
               decoration: const InputDecoration(labelText: 'Nome'),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: cognomeController,
-              onChanged: onCognomeChanged,
+              onChanged: widget.onCognomeChanged,
               decoration: const InputDecoration(labelText: 'Cognome'),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: emailController,
-              onChanged: onEmailChanged,
+              onChanged: widget.onEmailChanged,
               decoration: const InputDecoration(labelText: 'Email'),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: cfController,
-              onChanged: onCodiceFiscaleChanged,
+              onChanged: widget.onCodiceFiscaleChanged,
               decoration: const InputDecoration(labelText: 'Codice Fiscale'),
             ),
             const SizedBox(height: 12),
-            if (onPasswordChanged != null)
+            if (widget.onPasswordChanged != null && passwordController != null)
               TextField(
-                controller: TextEditingController(text: initialPassword ?? ''),
-                onChanged: onPasswordChanged,
+                controller: passwordController,
+                onChanged: widget.onPasswordChanged,
                 decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
               ),
             const SizedBox(height: 24),
-            isLoading
+            widget.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : ElevatedButton(
-                    onPressed: onSubmit,
-                    child: Text(title),
+                    onPressed: widget.onSubmit,
+                    child: Text(widget.title),
                   ),
           ],
         ),
       ),
     );
   }
-
 }

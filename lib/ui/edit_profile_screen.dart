@@ -20,9 +20,9 @@ class EditProfileScreen extends ConsumerWidget {
         Navigator.pop(context);
       }
 
-      if (next.error != null && next.error != prev?.error) {
+      if (next.error != prev?.error) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.error!)),
+          SnackBar(content: Text(next.error)),
         );
       }
     });
