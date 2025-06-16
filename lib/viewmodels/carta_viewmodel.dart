@@ -1,38 +1,33 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:progmobile_flutter/core/providers.dart';
 import '../data/collections/carta.dart';
 import '../repositories/carta_repository.dart';
 import '../data/collections/enums/card_provider.dart';
 
-final cartaRepositoryProvider = Provider((ref) => CartaRepository());
-
-final cartaViewModelProvider = StateNotifierProvider<CardViewModel, List<Carta>>(
-      (ref) => CardViewModel(ref),
-);
-
-class CardViewModel extends StateNotifier<List<Carta>> {
-  final Ref ref;
+class CardViewModel extends Notifier<List<Carta>> {
   late final CartaRepository _repository;
 
-  CardViewModel(this.ref) : super([]) {
+  @override
+  List<Carta> build() {
     _repository = ref.read(cartaRepositoryProvider);
     _init();
+    return [];
   }
 
   Future<void> _init() async {
-    final userId = FirebaseAuth.instance.currentUser?.uid;
+    final userId = _getUserId();
     if (userId == null) return;
     final carte = await _repository.fetchCarteForUser(userId);
     state = carte;
   }
 
   Future<void> addCard(
-      String number,
-      String holder, {
-        required String expiry,
-        required String cvv,
-      }) async {
-    final userId = FirebaseAuth.instance.currentUser?.uid;
+    String number,
+    String holder, {
+    required String expiry,
+    required String cvv,
+  }) async {
+    final userId = _getUserId();
     if (userId == null) return;
 
     final match = RegExp(r'^(\d{2})/(\d{2})$').firstMatch(expiry);
@@ -54,28 +49,21 @@ class CardViewModel extends StateNotifier<List<Carta>> {
       provider: CardProvider.VISA,
     );
 
-    final savedCarta = await _repository.addCarta(carta);
-    state = [...state, savedCarta];
+    final saved = await _repository.addCarta(carta);
+    state = [...state, saved];
   }
 
   Future<void> removeCard(int index) async {
-    final removed = state[index];
-    await _repository.removeCarta(removed.id);
-    final updated = [...state]..removeAt(index);
-    state = updated;
+    final carta = state[index];
+    await _repository.removeCarta(carta.id);
+    state = [...state]..removeAt(index);
   }
 
-  Future<Carta?> _trovaCartaInRepository(Carta card) async {
-    final userId = FirebaseAuth.instance.currentUser?.uid;
-    if (userId == null) return null;
-    final tutte = await _repository.fetchCarteForUser(userId);
-    return tutte.firstWhere(
-          (c) =>
-      c.cardNumber == card.cardNumber &&
-          c.cardHolderName == card.cardHolderName &&
-          c.expirationMonth == card.expirationMonth &&
-          c.expirationYear == card.expirationYear &&
-          c.cvv == card.cvv,
-    );
+  String? _getUserId() {
+    final session = ref.read(userSessionProvider);
+     if (session == null || session.userId.isEmpty) {
+      throw StateError("User ID non disponibile nella sessione utente.");
+    }
+    return session.userId;
   }
 }

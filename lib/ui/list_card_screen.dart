@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:progmobile_flutter/core/providers.dart';
 import 'package:progmobile_flutter/ui/add_card_screen.dart';
-import '../viewmodels/carta_viewmodel.dart';
 
 class CardListScreen extends ConsumerWidget {
   const CardListScreen({super.key});
@@ -14,30 +14,43 @@ class CardListScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Le tue carte')),
       body: cards.isEmpty
-          ? const Center(child: Text('Nessuna carta disponibile'))
+          ? const Center(
+              child: Text(
+                'Nessuna carta disponibile',
+                style: TextStyle(fontSize: 16),
+              ),
+            )
           : ListView.builder(
-        itemCount: cards.length,
-        itemBuilder: (context, index) {
-          final card = cards[index];
-          final last4 = card.cardNumber.length >= 4
-              ? card.cardNumber.substring(card.cardNumber.length - 4)
-              : card.cardNumber;
+              itemCount: cards.length,
+              itemBuilder: (context, index) {
+                final card = cards[index];
+                final last4 = card.cardNumber.length >= 4
+                    ? card.cardNumber.substring(card.cardNumber.length - 4)
+                    : card.cardNumber;
 
-          return ListTile(
-            title: Text('**** **** **** $last4'),
-            subtitle: Text(card.cardHolderName),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () => viewModel.removeCard(index),
+                return Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: ListTile(
+                    title: Text('**** **** **** $last4'),
+                    subtitle: Text(card.cardHolderName),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () async {
+                        await viewModel.removeCard(index);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Carta rimossa')),
+                        );
+                      },
+                    ),
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Carta selezionata: **** **** **** $last4')),
+                      );
+                    },
+                  ),
+                );
+              },
             ),
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Carta selezionata: **** **** **** $last4')),
-              );
-            },
-          );
-        },
-      ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {

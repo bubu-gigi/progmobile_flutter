@@ -1,5 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 class UserSession {
   final String userId;
   final String ruolo;
@@ -9,5 +7,3 @@ class UserSession {
     required this.ruolo,
   });
 }
-
-final userSessionProvider = StateProvider<UserSession?>((ref) => null);

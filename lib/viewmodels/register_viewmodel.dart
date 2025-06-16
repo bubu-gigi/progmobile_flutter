@@ -2,23 +2,31 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:progmobile_flutter/viewmodels/state/register_state.dart';
 import '../data/collections/user.dart';
 import '../repositories/user_repository.dart';
+import '../core/providers.dart'; 
 
-final userRepositoryProvider = Provider((ref) => UserRepository());
+class RegisterViewModel extends Notifier<RegisterState> {
+  late final UserRepository _userRepository;
 
-final registerViewModelProvider = StateNotifierProvider<RegisterViewModel, RegisterState>(
-      (ref) => RegisterViewModel(ref.read(userRepositoryProvider)),
-);
+  @override
+  RegisterState build() {
+    _userRepository = ref.read(userRepositoryProvider);
+    return RegisterState();
+  }
 
-class RegisterViewModel extends StateNotifier<RegisterState> {
-  final UserRepository _userRepository;
+  void setNome(String nome) =>
+      state = state.copyWith(nome: nome);
 
-  RegisterViewModel(this._userRepository) : super(RegisterState());
+  void setCognome(String cognome) =>
+      state = state.copyWith(cognome: cognome);
 
-  void setNome(String nome) => state = state.copyWith(nome: nome);
-  void setCognome(String cognome) => state = state.copyWith(cognome: cognome);
-  void setEmail(String email) => state = state.copyWith(email: email);
-  void setCodiceFiscale(String cf) => state = state.copyWith(codiceFiscale: cf);
-  void setPassword(String password) => state = state.copyWith(password: password);
+  void setEmail(String email) =>
+      state = state.copyWith(email: email);
+
+  void setCodiceFiscale(String cf) =>
+      state = state.copyWith(codiceFiscale: cf);
+
+  void setPassword(String password) =>
+      state = state.copyWith(password: password);
 
   Future<void> register() async {
     state = state.copyWith(isLoading: true);
@@ -41,11 +49,14 @@ class RegisterViewModel extends StateNotifier<RegisterState> {
         state.password,
       );
 
-        state = state.copyWith(isLoading: false, success: true);
+      state = state.copyWith(isLoading: false, success: true);
     } catch (e) {
       print('Errore durante la registrazione: $e');
-    } finally {
-      state = state.copyWith(isLoading: false);
+      state = state.copyWith(
+        isLoading: false,
+        success: false,
+        error: 'Registrazione fallita: ${e.toString()}',
+      );
     }
   }
 }

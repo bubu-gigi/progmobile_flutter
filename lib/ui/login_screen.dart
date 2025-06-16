@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:progmobile_flutter/core/providers.dart';
 import 'package:progmobile_flutter/core/routes.dart';
 import 'package:progmobile_flutter/viewmodels/state/login_state.dart';
-import '../viewmodels/login_viewmodel.dart';
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
@@ -12,6 +12,7 @@ class LoginScreen extends ConsumerWidget {
     final state = ref.watch(loginViewModelProvider);
     final vm = ref.read(loginViewModelProvider.notifier);
 
+    // Navigazione e feedback su stato
     ref.listen<LoginState>(loginViewModelProvider, (prev, next) {
       if (next.success && prev?.success != true) {
         Navigator.pushReplacementNamed(context, AppRoutes.homeGiocatore);
@@ -27,28 +28,39 @@ class LoginScreen extends ConsumerWidget {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
               onChanged: vm.setEmail,
-              decoration: const InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.emailAddress,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             TextField(
               onChanged: vm.setPassword,
-              decoration: const InputDecoration(labelText: 'Password'),
+              decoration: const InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+              ),
               obscureText: true,
             ),
             const SizedBox(height: 24),
             state.isLoading
                 ? const CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: vm.login,
-                    child: const Text('Login'),
+                : SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: vm.login,
+                      child: const Text('Login'),
+                    ),
                   ),
+            const SizedBox(height: 12),
             TextButton(
-              onPressed: () =>
-                  Navigator.pushNamed(context, AppRoutes.register),
-              child: const Text("Don't have an account? Register"),
+              onPressed: () => Navigator.pushNamed(context, AppRoutes.register),
+              child: const Text("Non hai un account? Registrati"),
             ),
           ],
         ),

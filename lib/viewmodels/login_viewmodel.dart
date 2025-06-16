@@ -1,20 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:progmobile_flutter/core/providers.dart';
 import 'package:progmobile_flutter/core/user_session.dart';
 import 'package:progmobile_flutter/viewmodels/state/login_state.dart';
 import '../repositories/user_repository.dart';
 
-final userRepositoryProvider = Provider((ref) => UserRepository());
+class LoginViewModel extends Notifier<LoginState> {
+  late final UserRepository _userRepository;
 
-final loginViewModelProvider =
-    StateNotifierProvider<LoginViewModel, LoginState>(
-  (ref) => LoginViewModel(ref.read(userRepositoryProvider), ref),
-);
-
-class LoginViewModel extends StateNotifier<LoginState> {
-  final UserRepository _userRepository;
-  final Ref ref;
-
-  LoginViewModel(this._userRepository, this.ref) : super(LoginState());
+  @override
+  LoginState build() {
+    _userRepository = ref.read(userRepositoryProvider);
+    return LoginState(); // stato iniziale
+  }
 
   void setEmail(String email) {
     state = state.copyWith(email: email);
