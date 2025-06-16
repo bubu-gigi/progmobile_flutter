@@ -1,4 +1,4 @@
-package me.univpm.gameon.progmobile_flutter
+package me.univpm.gameon
 
 import io.flutter.embedding.android.FlutterActivity
 
