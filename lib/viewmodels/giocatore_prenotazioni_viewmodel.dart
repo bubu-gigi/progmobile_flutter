@@ -39,11 +39,31 @@ class GiocatorePrenotazioniViewModel extends Notifier<GiocatorePrenotazioniState
 
   List<Prenotazione> get prenotazioniFiltrate {
     final now = DateTime.now();
+
     return state.prenotazioni.where((pren) {
       try {
-        final data = DateFormat("dd/MM/yyyy").parse(pren.data);
-        final orario = DateFormat.Hm().parse(pren.orarioFine);
-        final fine = DateTime(data.year, data.month, data.day, orario.hour, orario.minute);
+        final dataStr = pren.data;
+        final fineStr = pren.orarioFine;
+
+        // Log di debug
+        debugPrint("Parsing prenotazione → data: $dataStr, orarioFine: $fineStr");
+
+        // Parsing data
+        final dataParts = dataStr.split("/");
+        if (dataParts.length != 3) return false;
+
+        final giorno = int.parse(dataParts[0]);
+        final mese = int.parse(dataParts[1]);
+        final anno = int.parse(dataParts[2]);
+
+        // Parsing orario
+        final orarioParts = fineStr.split(":");
+        if (orarioParts.length != 2) return false;
+
+        final oraFine = int.parse(orarioParts[0]);
+        final minutiFine = int.parse(orarioParts[1]);
+
+        final fine = DateTime(anno, mese, giorno, oraFine, minutiFine);
 
         final isPassata = fine.isBefore(now);
         final isAttiva = fine.isAfter(now) || fine.isAtSameMomentAs(now);
@@ -52,11 +72,12 @@ class GiocatorePrenotazioniViewModel extends Notifier<GiocatorePrenotazioniState
             (state.filtroSelezionato == "Passate" && isPassata) ||
             (state.filtroSelezionato == "Attive" && isAttiva);
       } catch (e) {
-        debugPrint("Errore nel parsing data/orario: $e");
+        debugPrint("Errore parsing prenotazione: $e");
         return false;
       }
     }).toList();
   }
+
 
   void setFiltro(String filtro) {
     state = state.copyWith(filtroSelezionato: filtro);
