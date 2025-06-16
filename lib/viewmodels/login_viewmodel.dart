@@ -37,7 +37,7 @@ class LoginViewModel extends Notifier<LoginState> {
           userId: user.id,
           ruolo: user.ruolo,
         );
-        state = state.copyWith(isLoading: false, success: true);
+        state = state.copyWith(isLoading: false, success: true, role: user.ruolo);
       } else {
         state = state.copyWith(
           isLoading: false,

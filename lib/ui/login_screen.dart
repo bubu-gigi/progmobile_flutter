@@ -21,7 +21,15 @@ class LoginScreen extends ConsumerWidget {
     ref.listen<LoginState>(loginViewModelProvider, (prev, next) {
       // Se il login ha avuto successo (success == true), navighiamo alla home
       if (next.success && prev?.success != true) {
-        Navigator.pushReplacementNamed(context, AppRoutes.homeGiocatore);
+        if(next.role == "Giocatore") {
+          Navigator.pushReplacementNamed(context, AppRoutes.homeGiocatore);
+        } else if(next.role == "Admin") {
+          Navigator.pushReplacementNamed(context, AppRoutes.homeAdmin);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Ruolo non riconosciuto")),
+          );
+        }
       }
 
       // Se c'è un errore nuovo, lo mostriamo con uno SnackBar

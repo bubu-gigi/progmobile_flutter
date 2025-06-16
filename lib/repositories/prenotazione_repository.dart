@@ -12,6 +12,8 @@ class PrenotazioneRepository {
 
   Future<List<Prenotazione>> prenotazioniUtente(String userId) => _dao.getPrenotazioniByUser(userId);
 
+  Future<List<Prenotazione>> prenotazioniStruttura(String strutturaId) => _dao.getPrenotazioniByStruttura(strutturaId);
+
   Future<List<Prenotazione>> prenotazioniCampo(String campoId) => _dao.getPrenotazioniByCampo(campoId);
 
   Future<Prenotazione?> getById(String id) => _dao.getPrenotazioneById(id);

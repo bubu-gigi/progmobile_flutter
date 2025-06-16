@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:progmobile_flutter/data/collections/prenotazione.dart';
 import 'package:progmobile_flutter/repositories/prenotazione_repository.dart';
 import 'package:progmobile_flutter/repositories/struttura_repository.dart';

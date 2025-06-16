@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:progmobile_flutter/ui/edit_profile_screen.dart';
 import 'package:progmobile_flutter/ui/giocatore_prenotazioni.dart';
+import 'package:progmobile_flutter/ui/home_admin_screen.dart';
 import 'package:progmobile_flutter/ui/home_giocatore_screen.dart';
 import 'package:progmobile_flutter/ui/struttura_dettaglio.dart';
 import '../ui/login_screen.dart';
@@ -14,6 +15,7 @@ class AppRoutes {
   static const cards = '/cards';
   static const addCard = '/cards/add';
   static const homeGiocatore = '/player-home';
+  static const homeAdmin = '/admin-home';
   static const editProfile = '/edit-profile';
   static const giocatorePrenotazioni = '/player-reservations';
   static const dettaglioStruttura = '/struttura-dettaglio';
@@ -39,6 +41,8 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => StrutturaDettaglioScreen(strutturaId: strutturaId),
         );
+      case homeAdmin:
+        return MaterialPageRoute(builder: (_) => const HomeAdminScreen());
       default:
         return MaterialPageRoute(
           builder: (_) =>

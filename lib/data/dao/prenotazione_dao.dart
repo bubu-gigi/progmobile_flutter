@@ -51,6 +51,15 @@ class PrenotazioneDao {
     }).toList();
   }
 
+  Future<List<Prenotazione>> getPrenotazioniByStruttura(String strutturaId) async {
+    final querySnapshot = await prenotazioniCollection.where('strutturaId', isEqualTo: strutturaId).get();
+
+    return querySnapshot.docs.map((doc) {
+      return Prenotazione.fromJson(doc.data() as Map<String, dynamic>)
+          .copyWith(id: doc.id);
+    }).toList();
+  }
+
   Future<List<Prenotazione>> getPrenotazioniByCampo(String campoId) async {
     final querySnapshot =
         await prenotazioniCollection.where('campoId', isEqualTo: campoId).get();
