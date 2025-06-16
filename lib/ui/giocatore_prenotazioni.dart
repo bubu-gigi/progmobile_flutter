@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:progmobile_flutter/core/providers.dart';
+import 'package:progmobile_flutter/core/routes.dart';
 import 'package:progmobile_flutter/ui/components/mappa_strutture_con_filtri.dart';
 
 class GiocatorePrenotazioniScreen extends ConsumerStatefulWidget {
@@ -60,7 +61,7 @@ class _GiocatorePrenotazioniScreenState
     }
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white10,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -149,8 +150,12 @@ class _GiocatorePrenotazioniScreenState
             const SizedBox(height: 8),
             MappaStruttureConFiltri(
               strutture: state.strutture,
-              onStrutturaSelezionata: (_) {
-                // Dettaglio struttura (da attivare se implementato)
+              onStrutturaSelezionata: (struttura) {
+                Navigator.pushNamed(
+                  context,
+                  AppRoutes.dettaglioStruttura,
+                  arguments: struttura.id,
+                );
               },
               height: 300,
             ),

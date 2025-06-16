@@ -15,6 +15,9 @@ import 'package:progmobile_flutter/viewmodels/state/giocatore_prenotazioni_state
 import 'package:progmobile_flutter/viewmodels/state/login_state.dart';
 import 'package:progmobile_flutter/viewmodels/state/register_state.dart';
 
+import '../viewmodels/state/struttura_dettaglio_state.dart';
+import '../viewmodels/struttura_dettaglio_viewmodel.dart';
+
 final userRepositoryProvider = Provider((ref) => UserRepository());
 final campoRepositoryProvider = Provider((ref) => CampoRepository());
 final cartaRepositoryProvider = Provider((ref) => CartaRepository());
@@ -40,3 +43,8 @@ final editProfileViewModelProvider =
 
 final cartaViewModelProvider =
     NotifierProvider<CardViewModel, List<Carta>>(() => CardViewModel());
+
+final strutturaDettaglioViewModelProvider =
+NotifierProvider<StrutturaDettaglioViewModel, StrutturaDettaglioState>(
+        () => StrutturaDettaglioViewModel(),
+);

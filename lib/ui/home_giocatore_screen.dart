@@ -27,7 +27,7 @@ class HomeGiocatoreScreen extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, AppRoutes.editProfile);
+                Navigator.pushNamed(context, AppRoutes.giocatorePrenotazioni);
               },
               child: const Text('Gestisci prenotazioni'),
             ),
