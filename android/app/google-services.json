@@ -28,7 +28,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:956215848704:android:2017e6be2c03e431828de5",
         "android_client_info": {
-          "package_name": "com.univpm.gameon"
+          "package_name": "me.univpm.gameon.progmobile_flutter"
         }
       },
       "oauth_client": [],
