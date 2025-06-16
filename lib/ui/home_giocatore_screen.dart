@@ -41,7 +41,6 @@ class HomeGiocatoreScreen extends StatelessWidget {
             // Bottone per visualizzare e gestire le prenotazioni
             ElevatedButton(
               onPressed: () {
-                // Naviga alla schermata delle prenotazioni
                 Navigator.pushNamed(context, AppRoutes.giocatorePrenotazioni);
               },
               child: const Text('Gestisci prenotazioni'),

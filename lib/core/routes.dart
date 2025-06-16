@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:progmobile_flutter/ui/edit_profile_screen.dart';
 import 'package:progmobile_flutter/ui/giocatore_prenotazioni.dart';
 import 'package:progmobile_flutter/ui/home_giocatore_screen.dart';
+import 'package:progmobile_flutter/ui/struttura_dettaglio.dart';
 import '../ui/login_screen.dart';
 import '../ui/register_screen.dart';
 import '../ui/list_card_screen.dart';
@@ -15,6 +16,7 @@ class AppRoutes {
   static const homeGiocatore = '/player-home';
   static const editProfile = '/edit-profile';
   static const giocatorePrenotazioni = '/player-reservations';
+  static const dettaglioStruttura = '/struttura-dettaglio';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -32,6 +34,11 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const EditProfileScreen());
       case giocatorePrenotazioni:
         return MaterialPageRoute(builder: (_) => const GiocatorePrenotazioniScreen());
+      case dettaglioStruttura:
+        final strutturaId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => StrutturaDettaglioScreen(strutturaId: strutturaId),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) =>
