@@ -41,7 +41,6 @@ class LoginScreen extends ConsumerWidget {
     });
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
