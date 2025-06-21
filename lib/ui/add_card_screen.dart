@@ -16,15 +16,26 @@ class AddCardScreen extends ConsumerStatefulWidget {
 //la classe che gestisce il nostro stato e ci aggianciamo lo screen
 class _AddCardScreenState extends ConsumerState<AddCardScreen> {
   //controllers che gestiscono la validazione del form
-  final _numberController = TextEditingController();
-  final _holderController = TextEditingController();
-  final _expiryController = TextEditingController();
-  final _cvvController = TextEditingController();
+  late final TextEditingController _holderController;
+  late final TextEditingController _numberController;
+  late final TextEditingController _expiryController;
+  late final TextEditingController _cvvController;
   // Chiave per identificare il Form e validarlo (formKey.currentState!.validate())
   final _formKey = GlobalKey<FormState>();
   //operazioni asincrone gestisce il salvataggio -> spinner possiamo inserirli
   bool _isSaving = false;
   // alla distruzione/ricostruzione del widget resetta tutti i controller e libera memoria
+
+  @override
+  void initState() {
+    super.initState();
+    final session = ref.read(userSessionProvider);
+    _numberController = TextEditingController();
+    _expiryController = TextEditingController();
+    _cvvController = TextEditingController();
+    _holderController = TextEditingController(text: session?.nameAndSurname ?? '');
+  }
+
   @override
   void dispose() {
     _numberController.dispose();

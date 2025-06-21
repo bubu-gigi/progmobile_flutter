@@ -36,6 +36,7 @@ class LoginViewModel extends Notifier<LoginState> {
         ref.read(userSessionProvider.notifier).state = UserSession(
           userId: user.id,
           ruolo: user.ruolo,
+          nameAndSurname: "${user.name} ${user.cognome}"
         );
         state = state.copyWith(isLoading: false, success: true, role: user.ruolo);
       } else {
