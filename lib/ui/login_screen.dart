@@ -21,9 +21,9 @@ class LoginScreen extends ConsumerWidget {
     ref.listen<LoginState>(loginViewModelProvider, (prev, next) {
       // Se il login ha avuto successo (success == true), navighiamo alla home
       if (next.success && prev?.success != true) {
-        if(next.role == "Giocatore") {
+        if (next.role == "Giocatore") {
           Navigator.pushReplacementNamed(context, AppRoutes.homeGiocatore);
-        } else if(next.role == "Admin") {
+        } else if (next.role == "Admin") {
           Navigator.pushReplacementNamed(context, AppRoutes.homeAdmin);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -42,61 +42,68 @@ class LoginScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
-
-      // Padding attorno al form
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-
-        // Colonna centrata verticalmente con i campi e i bottoni
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Campo email
-            TextField(
-              onChanged: vm.setEmail, // aggiorna lo stato nel ViewModel
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/image/sfondo1.png'), // Percorso dell'immagine di sfondo
+            fit: BoxFit.cover, // Adatta l'immagine allo schermo
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Campo email
+              TextField(
+                onChanged: vm.setEmail, // aggiorna lo stato nel ViewModel
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                  filled: true, // Riempi il campo
+                  fillColor: Colors.white, // Colore di riempimento
+                ),
+                keyboardType: TextInputType.emailAddress,
               ),
-              keyboardType: TextInputType.emailAddress,
-            ),
 
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
 
-            // Campo password
-            TextField(
-              onChanged: vm.setPassword, // aggiorna lo stato nel ViewModel
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
+              // Campo password
+              TextField(
+                onChanged: vm.setPassword, // aggiorna lo stato nel ViewModel
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                  filled: true, // Riempi il campo
+                  fillColor: Colors.white, // Colore di riempimento
+                ),
+                obscureText: true, // nasconde i caratteri digitati
               ),
-              obscureText: true, // nasconde i caratteri digitati
-            ),
 
-            const SizedBox(height: 24),
+              const SizedBox(height: 24),
 
-            // Se è in caricamento, mostra spinner
-            state.isLoading
-                ? const CircularProgressIndicator()
+              // Se è in caricamento, mostra spinner
+              state.isLoading
+                  ? const CircularProgressIndicator()
+              // Altrimenti mostra il bottone di login
+                  : SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: vm.login, // chiama la funzione login del ViewModel
+                  child: const Text('Login'),
+                ),
+              ),
 
-                // Altrimenti mostra il bottone di login
-                : SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: vm.login, // chiama la funzione login del ViewModel
-                      child: const Text('Login'),
-                    ),
-                  ),
+              const SizedBox(height: 12),
 
-            const SizedBox(height: 12),
-
-            // Link per andare alla schermata di registrazione
-            TextButton(
-              onPressed: () =>
-                  Navigator.pushNamed(context, AppRoutes.register),
-              child: const Text("Non hai un account? Registrati"),
-            ),
-          ],
+              // Link per andare alla schermata di registrazione
+              TextButton(
+                onPressed: () =>
+                    Navigator.pushNamed(context, AppRoutes.register),
+                child: const Text("Non hai un account? Registrati"),
+              ),
+            ],
+          ),
         ),
       ),
     );
