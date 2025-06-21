@@ -149,6 +149,7 @@ class _StrutturaDettaglioScreenState extends ConsumerState<StrutturaDettaglioScr
                     : () async {
                   final struttura = state.struttura!;
                   final dataString = DateFormat('dd/MM/yyyy').format(dataSelezionata!);
+
                   for (final entry in orariSelezionati) {
                     final parts = entry.split('-');
                     if (parts.length < 3) continue;
@@ -157,31 +158,61 @@ class _StrutturaDettaglioScreenState extends ConsumerState<StrutturaDettaglioScr
                     final orarioInizio = parts[1];
                     final orarioFine = parts[2];
 
-                    final campoObj = state.campi.firstWhere((c) => c.id == campoId, orElse: () => throw Exception("Campo non trovato"));
-
-                    final prenotazione = Prenotazione(
-                      id: "",
-                      userId: userId,
-                      strutturaId: struttura.id,
-                      campoId: campoObj.id,
-                      data: dataString,
-                      orarioInizio: orarioInizio,
-                      orarioFine: orarioFine,
-                      pubblica: false,
+                    final campoObj = state.campi.firstWhere(
+                          (c) => c.id == campoId,
+                      orElse: () => throw Exception("Campo non trovato"),
                     );
 
-                    await vm.creaPrenotazione(prenotazione);
+                    final conferma = await showDialog<bool>(
+                      context: context,
+                      builder: (context) =>
+                          AlertDialog(
+                            title: const Text("Conferma prenotazione"),
+                            content: Text(
+                              "Stai prenotando per il campo ${campoObj
+                                  .nomeCampo} "
+                                  "in data $dataString dalle $orarioInizio alle $orarioFine "
+                                  "al costo di ${campoObj
+                                  .prezzoOrario}€. Sei sicuro?", // TODO: fix
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, false),
+                                child: const Text("No"),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, true),
+                                child: const Text("Sì"),
+                              ),
+                            ],
+                          ),
+                    );
+
+                    if (conferma == true) {
+                      final prenotazione = Prenotazione(
+                        id: "",
+                        userId: userId,
+                        strutturaId: struttura.id,
+                        campoId: campoObj.id,
+                        data: dataString,
+                        orarioInizio: orarioInizio,
+                        orarioFine: orarioFine,
+                        pubblica: false,
+                      );
+
+                      await vm.creaPrenotazione(prenotazione);
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text(
+                            "Prenotazione effettuata")),
+                      );
+
+                      setState(() {
+                        orariSelezionati.clear();
+                        dataSelezionata = null;
+                      });
+                    }
                   }
-
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Prenotazione effettuata")),
-                  );
-
-                  setState(() {
-                    orariSelezionati.clear();
-                    dataSelezionata = null;
-                  });
                 },
                 child: const Text("Prenota"),
               )
