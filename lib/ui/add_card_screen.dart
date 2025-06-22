@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:progmobile_flutter/repositories/carta_repository.dart';
 import 'package:progmobile_flutter/viewmodels/carta_viewmodel.dart';
 import 'package:progmobile_flutter/core/user_session.dart';
+import '../data/collections/enums/card_provider.dart';
 
 class AddCardScreen extends StatefulWidget {
-
   const AddCardScreen({super.key});
 
   @override
@@ -20,13 +20,14 @@ class _AddCardScreenState extends State<AddCardScreen> {
   late final TextEditingController _expiryController;
   late final TextEditingController _cvvController;
 
+  CardProvider? _selectedProvider;
+
   final _formKey = GlobalKey<FormState>();
   bool _isSaving = false;
 
   @override
   void initState() {
     super.initState();
-    // Instanzia il ViewModel passando il repository e la sessione utente
     _viewModel = CardViewModel(
       CartaRepository(),
     );
@@ -50,7 +51,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
   }
 
   Future<void> _onSubmit() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate() || _selectedProvider == null) return;
 
     setState(() => _isSaving = true);
 
@@ -58,8 +59,9 @@ class _AddCardScreenState extends State<AddCardScreen> {
       await _viewModel.addCard(
         _numberController.text.trim(),
         _holderController.text.trim(),
-        expiry: _expiryController.text.trim(),
-        cvv: _cvvController.text.trim(),
+        _expiryController.text.trim(),
+        _cvvController.text.trim(),
+        _selectedProvider!,
       );
 
       if (mounted) Navigator.pop(context);
@@ -88,6 +90,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
                 validator: (value) =>
                 value == null || value.isEmpty ? 'Campo obbligatorio' : null,
               ),
+              const SizedBox(height: 12),
               TextFormField(
                 controller: _numberController,
                 decoration: const InputDecoration(labelText: 'Numero carta'),
@@ -96,6 +99,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
                 validator: (value) =>
                 value == null || value.length != 16 ? 'Numero non valido' : null,
               ),
+              const SizedBox(height: 12),
               TextFormField(
                 controller: _expiryController,
                 decoration: const InputDecoration(labelText: 'Scadenza (MM/AA)'),
@@ -108,6 +112,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
                   return null;
                 },
               ),
+              const SizedBox(height: 12),
               TextFormField(
                 controller: _cvvController,
                 decoration: const InputDecoration(labelText: 'CVV'),
@@ -116,6 +121,22 @@ class _AddCardScreenState extends State<AddCardScreen> {
                 obscureText: true,
                 validator: (value) =>
                 value == null || value.length < 3 ? 'CVV non valido' : null,
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<CardProvider>(
+                value: _selectedProvider,
+                decoration: const InputDecoration(
+                  labelText: 'Tipo carta',
+                  border: OutlineInputBorder(),
+                ),
+                items: CardProvider.values.map((prov) {
+                  return DropdownMenuItem(
+                    value: prov,
+                    child: Text(prov.label),
+                  );
+                }).toList(),
+                onChanged: (prov) => setState(() => _selectedProvider = prov),
+                validator: (prov) => prov == null ? 'Seleziona tipo carta' : null,
               ),
               const SizedBox(height: 24),
               ElevatedButton(

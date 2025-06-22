@@ -24,15 +24,16 @@ class MappaStruttureConFiltri extends StatefulWidget {
 
 class _MappaStruttureConFiltriState extends State<MappaStruttureConFiltri> {
   String? cittaSelezionata;
-  String? sportSelezionato;
+  Sport? sportSelezionato;
   late GoogleMapController _mapController;
   bool locationGranted = false;
 
-  final List<String> cittaPrincipali = [
-    "Roma", "Milano", "Napoli", "Torino", "Palermo",
-    "Genova", "Bologna", "Firenze", "Bari", "Catania",
-    "Venezia", "Verona", "Messina", "Padova", "Trieste", "Ancona"
-  ];
+  List<String> get cittaPrincipali => widget.strutture
+      .map((s) => s.citta)
+      .where((c) => c.trim().isNotEmpty)
+      .toSet()
+      .toList()
+    ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
   List<Sport> get sportDisponibili => widget.strutture
       .expand((s) => s.sportPraticabili)
@@ -44,7 +45,7 @@ class _MappaStruttureConFiltriState extends State<MappaStruttureConFiltri> {
       final matchCitta = cittaSelezionata == null ||
           s.citta.toLowerCase() == cittaSelezionata!.toLowerCase();
       final matchSport = sportSelezionato == null ||
-          s.sportPraticabili.map((e) => e.name).contains(sportSelezionato);
+          s.sportPraticabili.contains(sportSelezionato);
       return matchCitta && matchSport;
     }).toList();
   }
@@ -81,11 +82,22 @@ class _MappaStruttureConFiltriState extends State<MappaStruttureConFiltri> {
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: _dropdownFiltro(
-                  "Sport",
-                  sportDisponibili.map((e) => e.name).toList(),
-                  sportSelezionato,
-                  (val) => setState(() => sportSelezionato = val),
+                child: DropdownButtonFormField<Sport>(
+                  value: sportSelezionato,
+                  decoration: const InputDecoration(
+                    labelText: "Sport",
+                    border: OutlineInputBorder(),
+                  ),
+                  isExpanded: true,
+                  hint: const Text('Tutti'),
+                  items: [
+                    const DropdownMenuItem<Sport>(value: null, child: Text('Tutti')),
+                    ...sportDisponibili.map((sport) => DropdownMenuItem(
+                      value: sport,
+                      child: Text(sport.label),
+                    )),
+                  ],
+                  onChanged: (val) => setState(() => sportSelezionato = val),
                 ),
               ),
             ],

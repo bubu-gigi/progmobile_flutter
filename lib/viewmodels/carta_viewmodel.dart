@@ -23,8 +23,7 @@ class CardViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addCard(String number, String holder,
-      {required String expiry, required String cvv}) async {
+  Future<void> addCard(String number, String holder, String expiry, String cvv, CardProvider provider) async {
     final userId = _userSession?.userId;
     if (userId == null || userId.isEmpty) return;
 
@@ -44,7 +43,7 @@ class CardViewModel extends ChangeNotifier {
       expirationMonth: month,
       expirationYear: year,
       cvv: cvv,
-      provider: CardProvider.VISA,
+      provider: provider,
     );
 
     final saved = await _repository.addCarta(carta);
