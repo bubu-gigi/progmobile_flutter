@@ -14,16 +14,36 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   late final RegisterViewModel _viewModel;
 
+  // 🆕 Controllers per i campi
+  late final TextEditingController nomeController;
+  late final TextEditingController cognomeController;
+  late final TextEditingController emailController;
+  late final TextEditingController cfController;
+  late final TextEditingController passwordController;
+
   @override
   void initState() {
     super.initState();
+
     _viewModel = RegisterViewModel(UserRepository());
     _viewModel.addListener(_onStateChanged);
+
+    // 🆕 Inizializza i controller vuoti
+    nomeController = TextEditingController();
+    cognomeController = TextEditingController();
+    emailController = TextEditingController();
+    cfController = TextEditingController();
+    passwordController = TextEditingController();
   }
 
   @override
   void dispose() {
     _viewModel.removeListener(_onStateChanged);
+    nomeController.dispose();
+    cognomeController.dispose();
+    emailController.dispose();
+    cfController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
@@ -38,7 +58,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
     }
 
-    setState(() {}); // Aggiorna l’interfaccia quando cambia qualcosa
+    setState(() {
+      // eventuali aggiornamenti visivi
+    });
   }
 
   @override
@@ -52,10 +74,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
       onEmailChanged: _viewModel.setEmail,
       onCodiceFiscaleChanged: _viewModel.setCodiceFiscale,
       onPasswordChanged: _viewModel.setPassword,
-      initialNome: _viewModel.nome,
-      initialCognome: _viewModel.cognome,
-      initialEmail: _viewModel.email,
-      initialCodiceFiscale: _viewModel.codiceFiscale,
+
+      // 🆕 Passa i controller al form
+      nomeController: nomeController,
+      cognomeController: cognomeController,
+      emailController: emailController,
+      cfController: cfController,
+      passwordController: passwordController,
     );
   }
 }

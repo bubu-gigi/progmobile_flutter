@@ -5,16 +5,15 @@ import 'package:progmobile_flutter/repositories/user_repository.dart';
 import '../core/user_session.dart';
 
 class EditProfileViewModel extends ChangeNotifier {
-  final UserRepository _repository;
+  late final UserRepository _repository;
 
-  EditProfileViewModel({UserRepository? repository})
-      : _repository = repository ?? UserRepository() {
+  EditProfileViewModel() {
+    _repository = UserRepository();
     currentUserSession = UserSessionManager().session;
     loadUserData();
   }
 
 
-  // Variabili semplici, modificabili
   String nome = '';
   String cognome = '';
   String email = '';
@@ -59,6 +58,7 @@ class EditProfileViewModel extends ChangeNotifier {
 
     try {
       final user = await _repository.fetchUserById(currentUserSession!.userId);
+      print(user);
       if (user != null) {
         _currentUser = user;
         nome = user.name;
