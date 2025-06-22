@@ -1,0 +1,207 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:progmobile_flutter/data/collections/struttura.dart';
+import 'package:progmobile_flutter/data/collections/campo.dart';
+import 'package:progmobile_flutter/ui/components/campo_dialog.dart';
+import 'package:progmobile_flutter/ui/components/google_places_autocomplete.dart';
+import '../core/providers.dart';
+
+class StrutturaFormScreen extends ConsumerStatefulWidget {
+  final Struttura? strutturaDaModificare;
+  final List<Campo>? campiEsistenti;
+
+  const StrutturaFormScreen({super.key, this.strutturaDaModificare, this.campiEsistenti});
+
+  @override
+  ConsumerState<StrutturaFormScreen> createState() => _StrutturaFormScreenState();
+}
+
+class _StrutturaFormScreenState extends ConsumerState<StrutturaFormScreen> {
+  late TextEditingController _nomeController;
+  late TextEditingController _indirizzoController;
+
+  List<Campo> campi = [];
+  LatLng? latLng;
+  String? citta;
+
+  Campo? campoInModifica;
+
+  @override
+  void initState() {
+    super.initState();
+    _nomeController = TextEditingController(text: widget.strutturaDaModificare?.nome ?? '');
+    _indirizzoController = TextEditingController(text: widget.strutturaDaModificare?.indirizzo ?? '');
+    campi = widget.campiEsistenti?.toList() ?? [];
+    latLng = widget.strutturaDaModificare != null
+        ? LatLng(
+      widget.strutturaDaModificare!.latitudine,
+      widget.strutturaDaModificare!.longitudine,
+    )
+        : null;
+    citta = widget.strutturaDaModificare?.citta;
+  }
+
+  @override
+  void dispose() {
+    _nomeController.dispose();
+    _indirizzoController.dispose();
+    super.dispose();
+  }
+
+
+  Future<String> _getCittaFromLatLng(double lat, double lng) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(lat, lng, localeIdentifier: "it_IT");
+      return placemarks.first.locality ?? '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  Future<void> _salvaStruttura() async {
+    if (latLng == null || _nomeController.text.isEmpty) return;
+
+    final struttura = (widget.strutturaDaModificare?.copyWith(
+      nome: _nomeController.text,
+      indirizzo: _indirizzoController.text,
+      citta: citta ?? '',
+      latitudine: latLng!.latitude,
+      longitudine: latLng!.longitude,
+      sportPraticabili: campi.map((c) => c.sport).toSet().toList(),
+    ) ??
+        Struttura(
+          id: '',
+          nome: _nomeController.text,
+          indirizzo: _indirizzoController.text,
+          citta: citta ?? '',
+          latitudine: latLng!.latitude,
+          longitudine: latLng!.longitude,
+          sportPraticabili: campi.map((c) => c.sport).toSet().toList(),
+        ));
+
+    if (widget.strutturaDaModificare != null) {
+      await ref.read(struttureViewModelProvider.notifier).aggiornaStruttura(struttura);
+    } else {
+      await ref.read(struttureViewModelProvider.notifier).aggiungiStruttura(struttura);
+    }
+
+    Navigator.pop(context); // Torniamo alla lista
+  }
+
+  Future<void> _eliminaStruttura() async {
+    if (widget.strutturaDaModificare == null) return;
+    await ref.read(struttureViewModelProvider.notifier).eliminaStruttura(
+      widget.strutturaDaModificare!.id,
+    );
+    Navigator.pop(context);
+  }
+
+  void _aggiungiCampo() {
+    setState(() {
+      campoInModifica = null;
+    });
+    showDialog(
+      context: context,
+      builder: (_) => CampoDialog(
+        campo: null,
+        onCampoSalvato: (c) {
+          setState(() => campi.add(c));
+        },
+      ),
+    );
+  }
+
+  void _modificaCampo(Campo campo) {
+    showDialog(
+      context: context,
+      builder: (_) => CampoDialog(
+        campo: campo,
+        onCampoSalvato: (c) {
+          setState(() {
+            campi = campi.map((el) => el == campo ? c : el).toList();
+          });
+        },
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isEdit = widget.strutturaDaModificare != null;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(isEdit ? 'Modifica struttura' : 'Nuova struttura'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: ListView(
+          children: [
+            TextField(
+              controller: _nomeController,
+              decoration: const InputDecoration(labelText: 'Nome struttura'),
+            ),
+            const SizedBox(height: 8),
+            // GooglePlacesAutocomplete
+            GoogleAutocompleteField(
+              onAddressSelected: (address) {
+                setState(() {
+                  _indirizzoController.text = address;
+                });
+              },
+              onCitySelected: (city) {
+                setState(() {
+                  citta = city;
+                });
+              },
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _indirizzoController,
+              decoration: const InputDecoration(labelText: 'Indirizzo completo'),
+              readOnly: true,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _aggiungiCampo,
+              child: const Text('Aggiungi campo'),
+            ),
+            const SizedBox(height: 8),
+            if (campi.isNotEmpty) ...[
+              const Text('Campi aggiunti:', style: TextStyle(fontWeight: FontWeight.bold)),
+              for (final campo in campi)
+                ListTile(
+                  title: Text('${campo.nomeCampo} (${campo.sport.name})'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () => _modificaCampo(campo),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () => setState(() => campi.remove(campo)),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _salvaStruttura,
+              child: Text(isEdit ? 'Aggiorna struttura' : 'Salva struttura'),
+            ),
+            if (isEdit)
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                onPressed: _eliminaStruttura,
+                child: const Text('Elimina struttura'),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}

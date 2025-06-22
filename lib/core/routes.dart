@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:progmobile_flutter/ui/admin_strutture_screen.dart';
 import 'package:progmobile_flutter/ui/edit_profile_screen.dart';
 import 'package:progmobile_flutter/ui/giocatore_prenotazioni.dart';
 import 'package:progmobile_flutter/ui/home_admin_screen.dart';
@@ -8,7 +9,7 @@ import '../ui/login_screen.dart';
 import '../ui/register_screen.dart';
 import '../ui/list_card_screen.dart';
 import '../ui/add_card_screen.dart';
-import '../ui/admin_prenotazioni.dart';
+import '../ui/admin_prenotazioni_screen.dart';
 
 class AppRoutes {
   static const login = '/';
@@ -21,6 +22,7 @@ class AppRoutes {
   static const giocatorePrenotazioni = '/player-reservations';
   static const adminPrenotazioni = '/admin-reservations';
   static const dettaglioStruttura = '/struttura-dettaglio';
+  static const adminStrutture = '/admin-strutture';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -47,6 +49,8 @@ class AppRoutes {
         );
       case homeAdmin:
         return MaterialPageRoute(builder: (_) => const HomeAdminScreen());
+      case adminStrutture:
+        return MaterialPageRoute(builder: (_) => const AdminStruttureScreen());
       default:
         return MaterialPageRoute(
           builder: (_) =>

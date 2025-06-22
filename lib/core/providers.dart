@@ -16,7 +16,9 @@ import 'package:progmobile_flutter/viewmodels/state/login_state.dart';
 import 'package:progmobile_flutter/viewmodels/state/register_state.dart';
 
 import '../viewmodels/state/struttura_dettaglio_state.dart';
+import '../viewmodels/state/strutture_state.dart';
 import '../viewmodels/struttura_dettaglio_viewmodel.dart';
+import '../viewmodels/strutture_viewmodel.dart';
 
 final userRepositoryProvider = Provider((ref) => UserRepository());
 final campoRepositoryProvider = Provider((ref) => CampoRepository());
@@ -48,3 +50,6 @@ final strutturaDettaglioViewModelProvider =
 NotifierProvider<StrutturaDettaglioViewModel, StrutturaDettaglioState>(
         () => StrutturaDettaglioViewModel(),
 );
+
+final struttureViewModelProvider =
+NotifierProvider<StruttureViewModel, StruttureState>(() => StruttureViewModel(),);

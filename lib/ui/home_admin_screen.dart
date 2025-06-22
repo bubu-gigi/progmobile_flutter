@@ -28,7 +28,7 @@ class HomeAdminScreen extends StatelessWidget {
             // Bottone per gestire le strutture
             ElevatedButton(
               onPressed: () {
-                //Navigator.pushNamed(context, AppRoutes.gestisciStrutture);
+                Navigator.pushNamed(context, AppRoutes.adminStrutture);
               },
               child: const Text('Gestisci strutture'),
             ),
