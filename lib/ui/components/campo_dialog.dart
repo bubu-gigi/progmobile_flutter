@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:progmobile_flutter/data/collections/campo.dart';
 import 'package:progmobile_flutter/data/collections/enums/sport.dart';
 import 'package:progmobile_flutter/data/collections/template_giornaliero.dart';
+import '../../data/collections/enums/tipologia_terreno.dart';
 import 'orario_dialog.dart';
 
 class CampoDialog extends StatefulWidget {
@@ -16,8 +17,8 @@ class CampoDialog extends StatefulWidget {
 
 class _CampoDialogState extends State<CampoDialog> {
   late TextEditingController _nomeController;
-  Sport? sportSelezionato;
-  String terreno = "erbaSintetica";
+  Sport sportSelezionato = Sport.CALCIO5;
+  TipologiaTerreno terreno = TipologiaTerreno.ERBA_SINTETICA;
   String prezzo = "20.0";
   String numGiocatori = "5";
   bool spogliatoi = false;
@@ -27,13 +28,16 @@ class _CampoDialogState extends State<CampoDialog> {
   void initState() {
     super.initState();
     _nomeController = TextEditingController(text: widget.campo?.nomeCampo ?? '');
-    sportSelezionato = widget.campo?.sport;
-    terreno = "erbaSintetica";
-    prezzo = widget.campo?.prezzoOrario?.toString() ?? "20.0";
-    numGiocatori = widget.campo?.numeroGiocatori?.toString() ?? "5";
+    sportSelezionato = widget.campo != null ? widget.campo!.sport : Sport.CALCIO5;
+    terreno = widget.campo != null
+        ? widget.campo!.tipologiaTerreno
+        : TipologiaTerreno.ERBA_SINTETICA;
+    prezzo = widget.campo?.prezzoOrario.toString() ?? "20.0";
+    numGiocatori = widget.campo?.numeroGiocatori.toString() ?? "5";
     spogliatoi = widget.campo?.spogliatoi ?? false;
     disponibilita = List.from(widget.campo?.disponibilitaSettimanale ?? []);
   }
+
 
   @override
   void dispose() {
@@ -57,11 +61,13 @@ class _CampoDialogState extends State<CampoDialog> {
       id: widget.campo?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
       nomeCampo: _nomeController.text,
       sport: sportSelezionato!,
+      tipologiaTerreno: terreno, // Usa l'enum scelto
       prezzoOrario: double.tryParse(prezzo) ?? 0.0,
       numeroGiocatori: int.tryParse(numGiocatori) ?? 0,
       spogliatoi: spogliatoi,
       disponibilitaSettimanale: disponibilita,
     );
+
 
     widget.onCampoSalvato(campo);
     Navigator.pop(context);
@@ -85,24 +91,29 @@ class _CampoDialogState extends State<CampoDialog> {
               value: sportSelezionato,
               decoration: const InputDecoration(labelText: 'Sport'),
               items: Sport.values
-                  .map((s) => DropdownMenuItem(
-                value: s,
-                child: Text(s.name),
-              ))
+                  .map(
+                    (s) => DropdownMenuItem(
+                  value: s,
+                  child: Text(s.label),
+                ),
+              )
                   .toList(),
-              onChanged: (s) => setState(() => sportSelezionato = s),
+              onChanged: (s) => setState(() => sportSelezionato = s ?? sportSelezionato),
             ),
+
             const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
+            DropdownButtonFormField<TipologiaTerreno>(
               value: terreno,
               decoration: const InputDecoration(labelText: 'Terreno'),
-              items: ["erbaSintetica", "erba", "terra"]
-                  .map((t) => DropdownMenuItem(
-                value: t,
-                child: Text(t),
-              ))
+              items: TipologiaTerreno.values
+                  .map(
+                    (tipo) => DropdownMenuItem(
+                  value: tipo,
+                  child: Text(tipo.label), // Usa l'extension per la label
+                ),
+              )
                   .toList(),
-              onChanged: (t) => setState(() => terreno = t ?? terreno),
+              onChanged: (tipo) => setState(() => terreno = tipo ?? terreno),
             ),
             const SizedBox(height: 8),
             TextField(
