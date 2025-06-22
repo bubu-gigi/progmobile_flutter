@@ -38,7 +38,7 @@ class HomeAdminScreen extends StatelessWidget {
             // Bottone per gestire prenotazioni
             ElevatedButton(
               onPressed: () {
-                //Navigator.pushNamed(context, AppRoutes.adminPrenotazioni);
+                Navigator.pushNamed(context, AppRoutes.adminPrenotazioni);
               },
               child: const Text('Gestisci prenotazioni'),
             ),

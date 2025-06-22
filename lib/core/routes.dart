@@ -8,6 +8,7 @@ import '../ui/login_screen.dart';
 import '../ui/register_screen.dart';
 import '../ui/list_card_screen.dart';
 import '../ui/add_card_screen.dart';
+import '../ui/admin_prenotazioni.dart';
 
 class AppRoutes {
   static const login = '/';
@@ -18,6 +19,7 @@ class AppRoutes {
   static const homeAdmin = '/admin-home';
   static const editProfile = '/edit-profile';
   static const giocatorePrenotazioni = '/player-reservations';
+  static const adminPrenotazioni = '/admin-reservations';
   static const dettaglioStruttura = '/struttura-dettaglio';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -36,6 +38,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const EditProfileScreen());
       case giocatorePrenotazioni:
         return MaterialPageRoute(builder: (_) => const GiocatorePrenotazioniScreen());
+      case adminPrenotazioni:
+        return MaterialPageRoute(builder: (_) => const GestisciPrenotazioniAdminScreen());
       case dettaglioStruttura:
         final strutturaId = settings.arguments as String;
         return MaterialPageRoute(
