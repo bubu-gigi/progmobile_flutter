@@ -9,3 +9,20 @@ class UserSession {
     required this.nameAndSurname,
   });
 }
+
+class UserSessionManager {
+  static final UserSessionManager _instance = UserSessionManager._internal();
+  factory UserSessionManager() => _instance;
+
+  UserSessionManager._internal();
+
+  UserSession? _userSession;
+
+  UserSession? get session => _userSession;
+
+  set session(UserSession? session) {
+    _userSession = session;
+  }
+
+  bool get isLoggedIn => _userSession != null;
+}

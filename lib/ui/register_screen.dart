@@ -1,37 +1,61 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:progmobile_flutter/core/providers.dart';
 import 'package:progmobile_flutter/core/routes.dart';
+import 'package:progmobile_flutter/repositories/user_repository.dart';
 import 'package:progmobile_flutter/ui/components/user_form.dart';
-import 'package:progmobile_flutter/viewmodels/state/register_state.dart';
+import 'package:progmobile_flutter/viewmodels/register_viewmodel.dart';
 
-class RegisterScreen extends ConsumerWidget {
+class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final registerState = ref.watch(registerViewModelProvider);
-    final vm = ref.read(registerViewModelProvider.notifier);
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
 
-    ref.listen<RegisterState>(registerViewModelProvider, (prev, next) {
-      if (next.success && prev?.success != true) {
-        Navigator.pushReplacementNamed(context, AppRoutes.homeGiocatore);
-      }
-    });
+class _RegisterScreenState extends State<RegisterScreen> {
+  late final RegisterViewModel _viewModel;
 
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = RegisterViewModel(UserRepository());
+    _viewModel.addListener(_onStateChanged);
+  }
+
+  @override
+  void dispose() {
+    _viewModel.removeListener(_onStateChanged);
+    super.dispose();
+  }
+
+  void _onStateChanged() {
+    if (_viewModel.success) {
+      Navigator.pushReplacementNamed(context, AppRoutes.homeGiocatore);
+    }
+
+    if (_viewModel.error.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_viewModel.error)),
+      );
+    }
+
+    setState(() {}); // Aggiorna l’interfaccia quando cambia qualcosa
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return UserForm(
       title: 'Registrati',
-      isLoading: registerState.isLoading,
-      onSubmit: vm.register,
-      onNomeChanged: vm.setNome,
-      onCognomeChanged: vm.setCognome,
-      onEmailChanged: vm.setEmail,
-      onCodiceFiscaleChanged: vm.setCodiceFiscale,
-      onPasswordChanged: vm.setPassword,
-      initialNome: '',
-      initialCognome: '',
-      initialEmail: '',
-      initialCodiceFiscale: '',
+      isLoading: _viewModel.isLoading,
+      onSubmit: _viewModel.register,
+      onNomeChanged: _viewModel.setNome,
+      onCognomeChanged: _viewModel.setCognome,
+      onEmailChanged: _viewModel.setEmail,
+      onCodiceFiscaleChanged: _viewModel.setCodiceFiscale,
+      onPasswordChanged: _viewModel.setPassword,
+      initialNome: _viewModel.nome,
+      initialCognome: _viewModel.cognome,
+      initialEmail: _viewModel.email,
+      initialCodiceFiscale: _viewModel.codiceFiscale,
     );
   }
 }

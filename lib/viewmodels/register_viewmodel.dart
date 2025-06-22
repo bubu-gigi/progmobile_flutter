@@ -1,62 +1,78 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:progmobile_flutter/viewmodels/state/register_state.dart';
+import 'package:flutter/foundation.dart';
 import '../data/collections/user.dart';
 import '../repositories/user_repository.dart';
-import '../core/providers.dart'; 
 
-class RegisterViewModel extends Notifier<RegisterState> {
-  late final UserRepository _userRepository;
+class RegisterViewModel extends ChangeNotifier {
+  final UserRepository _userRepository;
 
-  @override
-  RegisterState build() {
-    _userRepository = ref.read(userRepositoryProvider);
-    return RegisterState();
+  String nome = '';
+  String cognome = '';
+  String email = '';
+  String codiceFiscale = '';
+  String password = '';
+  bool isLoading = false;
+  bool success = false;
+  String error = '';
+
+  RegisterViewModel(this._userRepository);
+
+  void setNome(String value) {
+    nome = value;
+    notifyListeners();
   }
 
-  void setNome(String nome) =>
-      state = state.copyWith(nome: nome);
+  void setCognome(String value) {
+    cognome = value;
+    notifyListeners();
+  }
 
-  void setCognome(String cognome) =>
-      state = state.copyWith(cognome: cognome);
+  void setEmail(String value) {
+    email = value;
+    notifyListeners();
+  }
 
-  void setEmail(String email) =>
-      state = state.copyWith(email: email);
+  void setCodiceFiscale(String value) {
+    codiceFiscale = value;
+    notifyListeners();
+  }
 
-  void setCodiceFiscale(String cf) =>
-      state = state.copyWith(codiceFiscale: cf);
-
-  void setPassword(String password) =>
-      state = state.copyWith(password: password);
+  void setPassword(String value) {
+    password = value;
+    notifyListeners();
+  }
 
   Future<void> register() async {
-    state = state.copyWith(isLoading: true);
+    isLoading = true;
+    error = '';
+    success = false;
+    notifyListeners();
 
     try {
       final tempUser = User(
         id: '',
-        codiceFiscale: state.codiceFiscale,
-        cognome: state.cognome,
-        email: state.email,
-        name: state.nome,
-        password: state.password,
+        name: nome,
+        cognome: cognome,
+        email: email,
+        codiceFiscale: codiceFiscale,
+        password: password,
         ruolo: 'Giocatore',
         preferiti: [],
       );
 
       await _userRepository.registerWithEmailAndPassword(
         tempUser,
-        state.email,
-        state.password,
+        email,
+        password,
       );
 
-      state = state.copyWith(isLoading: false, success: true);
+      isLoading = false;
+      success = true;
+      notifyListeners();
     } catch (e) {
-      print('Errore durante la registrazione: $e');
-      state = state.copyWith(
-        isLoading: false,
-        success: false,
-        error: 'Registrazione fallita: ${e.toString()}',
-      );
+      isLoading = false;
+      success = false;
+      error = 'Errore registrazione: $e';
+      notifyListeners();
     }
   }
 }

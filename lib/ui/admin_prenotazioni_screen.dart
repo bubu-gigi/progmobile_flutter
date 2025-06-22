@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:progmobile_flutter/data/collections/prenotazione.dart';
 import 'package:progmobile_flutter/data/collections/struttura.dart';
+import 'package:progmobile_flutter/repositories/prenotazione_repository.dart';
+import 'package:progmobile_flutter/repositories/struttura_repository.dart';
 import 'package:progmobile_flutter/ui/components/mappa_strutture_con_filtri.dart';
-import '../core/providers.dart';
 
-class GestisciPrenotazioniAdminScreen extends ConsumerStatefulWidget {
+class GestisciPrenotazioniAdminScreen extends StatefulWidget {
   const GestisciPrenotazioniAdminScreen({super.key});
 
   @override
-  ConsumerState<GestisciPrenotazioniAdminScreen> createState() =>
+  State<GestisciPrenotazioniAdminScreen> createState() =>
       _GestisciPrenotazioniAdminScreenState();
 }
 
-class _GestisciPrenotazioniAdminScreenState extends ConsumerState<GestisciPrenotazioniAdminScreen> {
+class _GestisciPrenotazioniAdminScreenState
+    extends State<GestisciPrenotazioniAdminScreen> {
+  final PrenotazioneRepository _prenRepo = PrenotazioneRepository();
+  final StrutturaRepository _strutturaRepo = StrutturaRepository();
+
   String filtroCitta = '';
   String filtroSport = '';
   List<Prenotazione> tutteLePrenotazioni = [];
@@ -27,13 +31,11 @@ class _GestisciPrenotazioniAdminScreenState extends ConsumerState<GestisciPrenot
   }
 
   Future<void> _caricaDati() async {
-    final prenRepo = ref.read(prenotazioneRepositoryProvider);
-    final strutturaRepo = ref.read(strutturaRepositoryProvider);
-    final strutture = await strutturaRepo.caricaTutte();
+    final strutture = await _strutturaRepo.caricaTutte();
     final prenotazioni = <Prenotazione>[];
 
     for (final s in strutture) {
-      final pren = await prenRepo.prenotazioniStruttura(s.id);
+      final pren = await _prenRepo.prenotazioniStruttura(s.id);
       prenotazioni.addAll(pren);
     }
 
@@ -46,17 +48,21 @@ class _GestisciPrenotazioniAdminScreenState extends ConsumerState<GestisciPrenot
 
   List<Struttura> get struttureFiltrate {
     return tutteLeStrutture.where((s) {
-      final cittaMatch = filtroCitta.isEmpty || s.citta.toLowerCase().contains(filtroCitta.toLowerCase());
+      final cittaMatch = filtroCitta.isEmpty ||
+          s.citta.toLowerCase().contains(filtroCitta.toLowerCase());
       final sportMatch = filtroSport.isEmpty ||
           s.sportPraticabili.any(
                 (sp) => sp.name.toLowerCase().contains(filtroSport.toLowerCase()),
           );
+
       return cittaMatch && sportMatch;
     }).toList();
   }
 
   void _mostraDettagliPrenotazioni(Struttura struttura) {
-    final prenStruttura = tutteLePrenotazioni.where((p) => p.strutturaId == struttura.id).toList();
+    final prenStruttura = tutteLePrenotazioni
+        .where((p) => p.strutturaId == struttura.id)
+        .toList();
 
     showDialog(
       context: context,
@@ -72,9 +78,9 @@ class _GestisciPrenotazioniAdminScreenState extends ConsumerState<GestisciPrenot
             itemBuilder: (_, i) {
               final p = prenStruttura[i];
               return ListTile(
-                title: Text("Campo: ${p.campoId}"),
+                title: Text('Campo: ${p.campoId}'),
                 subtitle: Text(
-                  "Data: ${p.data} - ${p.orarioInizio} → ${p.orarioFine}",
+                  'Data: ${p.data} - ${p.orarioInizio} → ${p.orarioFine}',
                 ),
                 onTap: () => _mostraDettaglioSingolaPrenotazione(p),
               );
@@ -112,7 +118,7 @@ class _GestisciPrenotazioniAdminScreenState extends ConsumerState<GestisciPrenot
           TextButton(
             onPressed: () async {
               await _eliminaPrenotazione(p);
-              Navigator.pop(ctx); // Chiude il dialog di dettagli
+              Navigator.pop(ctx); // Chiudi dettagli
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
             child: const Text('Elimina'),
@@ -123,8 +129,7 @@ class _GestisciPrenotazioniAdminScreenState extends ConsumerState<GestisciPrenot
   }
 
   Future<void> _eliminaPrenotazione(Prenotazione p) async {
-    final prenRepo = ref.read(prenotazioneRepositoryProvider);
-    await prenRepo.eliminaPrenotazione(p.id);
+    await _prenRepo.eliminaPrenotazione(p.id);
     setState(() {
       tutteLePrenotazioni.removeWhere((el) => el.id == p.id);
     });
@@ -137,7 +142,7 @@ class _GestisciPrenotazioniAdminScreenState extends ConsumerState<GestisciPrenot
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Gestione Prenotazioni")),
+      appBar: AppBar(title: const Text('Gestione Prenotazioni')),
       backgroundColor: Colors.black,
       body: isLoading
           ? const Center(child: CircularProgressIndicator())

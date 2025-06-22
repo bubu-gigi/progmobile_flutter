@@ -1,39 +1,43 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:progmobile_flutter/core/providers.dart';
+import 'package:progmobile_flutter/repositories/carta_repository.dart';
+import 'package:progmobile_flutter/viewmodels/carta_viewmodel.dart';
+import 'package:progmobile_flutter/core/user_session.dart';
 
-// Usiamo ConsumerStatefulWidget per combinare lo stato locale (setState, controller...)
-// con la possibilità di accedere ai provider tramite ref (Riverpod)
-class AddCardScreen extends ConsumerStatefulWidget {
-  //ottimiziamo flutter con questa cosa
+class AddCardScreen extends StatefulWidget {
+
   const AddCardScreen({super.key});
 
-  //aggiungiamo il nostro stato a questo widget 
   @override
-  ConsumerState<AddCardScreen> createState() => _AddCardScreenState();
+  State<AddCardScreen> createState() => _AddCardScreenState();
 }
 
-//la classe che gestisce il nostro stato e ci aggianciamo lo screen
-class _AddCardScreenState extends ConsumerState<AddCardScreen> {
-  //controllers che gestiscono la validazione del form
+class _AddCardScreenState extends State<AddCardScreen> {
+  late final CardViewModel _viewModel;
+  final userSession = UserSessionManager().session;
+
   late final TextEditingController _holderController;
   late final TextEditingController _numberController;
   late final TextEditingController _expiryController;
   late final TextEditingController _cvvController;
-  // Chiave per identificare il Form e validarlo (formKey.currentState!.validate())
+
   final _formKey = GlobalKey<FormState>();
-  //operazioni asincrone gestisce il salvataggio -> spinner possiamo inserirli
   bool _isSaving = false;
-  // alla distruzione/ricostruzione del widget resetta tutti i controller e libera memoria
 
   @override
   void initState() {
     super.initState();
-    final session = ref.read(userSessionProvider);
+    // Instanzia il ViewModel passando il repository e la sessione utente
+    _viewModel = CardViewModel(
+      CartaRepository(),
+    );
+
+    _holderController = TextEditingController(
+      text: userSession?.nameAndSurname,
+    );
+
     _numberController = TextEditingController();
     _expiryController = TextEditingController();
     _cvvController = TextEditingController();
-    _holderController = TextEditingController(text: session?.nameAndSurname ?? '');
   }
 
   @override
@@ -44,31 +48,25 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
     _cvvController.dispose();
     super.dispose();
   }
-  //funzione che gestisce il salvataggio
+
   Future<void> _onSubmit() async {
-    //validiamo prima la form
     if (!_formKey.currentState!.validate()) return;
-    //siamo in salvataggio -> bloccheremo il bottone
+
     setState(() => _isSaving = true);
-    //ovviamente try-catch per gestire il tutto
+
     try {
-      // ref.read(...).notifier ci restituisce l'istanza del ViewModel (CartaViewModel)
-      // da cui possiamo chiamare i metodi come addCard. read = lettura non reattiva
-      await ref.read(cartaViewModelProvider.notifier).addCard(
-            _numberController.text.trim(),
-            _holderController.text.trim(),
-            expiry: _expiryController.text.trim(),
-            cvv: _cvvController.text.trim(),
-          );
-          //mounted dice se il widget è ancora visibile
+      await _viewModel.addCard(
+        _numberController.text.trim(),
+        _holderController.text.trim(),
+        expiry: _expiryController.text.trim(),
+        cvv: _cvvController.text.trim(),
+      );
+
       if (mounted) Navigator.pop(context);
     } catch (e) {
-    // context rappresenta il punto nell'albero dei widget. Serve per accedere a Navigator, Theme, SnackBar, ecc.
-    // mounted = true se il widget è ancora attivo. Evita errori quando usi setState dopo un'operazione async.
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Errore salvataggio carta: $e')),
       );
-      //in qualsiasi caso resettiamo _isSavig a false
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -88,7 +86,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                 controller: _holderController,
                 decoration: const InputDecoration(labelText: 'Nome intestatario'),
                 validator: (value) =>
-                    value == null || value.isEmpty ? 'Campo obbligatorio' : null,
+                value == null || value.isEmpty ? 'Campo obbligatorio' : null,
               ),
               TextFormField(
                 controller: _numberController,
@@ -96,7 +94,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                 keyboardType: TextInputType.number,
                 maxLength: 16,
                 validator: (value) =>
-                    value == null || value.length != 16 ? 'Numero non valido' : null,
+                value == null || value.length != 16 ? 'Numero non valido' : null,
               ),
               TextFormField(
                 controller: _expiryController,
@@ -117,7 +115,7 @@ class _AddCardScreenState extends ConsumerState<AddCardScreen> {
                 maxLength: 4,
                 obscureText: true,
                 validator: (value) =>
-                    value == null || value.length < 3 ? 'CVV non valido' : null,
+                value == null || value.length < 3 ? 'CVV non valido' : null,
               ),
               const SizedBox(height: 24),
               ElevatedButton(

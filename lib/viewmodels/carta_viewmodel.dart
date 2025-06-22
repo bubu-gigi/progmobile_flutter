@@ -1,34 +1,32 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:progmobile_flutter/core/providers.dart';
+import 'package:flutter/foundation.dart';
 import '../data/collections/carta.dart';
 import '../repositories/carta_repository.dart';
 import '../data/collections/enums/card_provider.dart';
+import '../core/user_session.dart';
 
-class CardViewModel extends Notifier<List<Carta>> {
-  late final CartaRepository _repository;
+class CardViewModel extends ChangeNotifier {
+  final CartaRepository _repository;
+  final _userSession = UserSessionManager().session;
 
-  @override
-  List<Carta> build() {
-    _repository = ref.read(cartaRepositoryProvider);
+  // Stato semplice
+  List<Carta> carte = [];
+
+  CardViewModel(this._repository) {
     _init();
-    return [];
   }
 
   Future<void> _init() async {
-    final userId = _getUserId();
-    if (userId == null) return;
-    final carte = await _repository.fetchCarteForUser(userId);
-    state = carte;
+    final userId = _userSession?.userId;
+    if (userId == null || userId.isEmpty) return;
+
+    carte = await _repository.fetchCarteForUser(userId);
+    notifyListeners();
   }
 
-  Future<void> addCard(
-    String number,
-    String holder, {
-    required String expiry,
-    required String cvv,
-  }) async {
-    final userId = _getUserId();
-    if (userId == null) return;
+  Future<void> addCard(String number, String holder,
+      {required String expiry, required String cvv}) async {
+    final userId = _userSession?.userId;
+    if (userId == null || userId.isEmpty) return;
 
     final match = RegExp(r'^(\d{2})/(\d{2})$').firstMatch(expiry);
     if (match == null) return;
@@ -50,20 +48,14 @@ class CardViewModel extends Notifier<List<Carta>> {
     );
 
     final saved = await _repository.addCarta(carta);
-    state = [...state, saved];
+    carte.add(saved);
+    notifyListeners();
   }
 
   Future<void> removeCard(int index) async {
-    final carta = state[index];
+    final carta = carte[index];
     await _repository.removeCarta(carta.id);
-    state = [...state]..removeAt(index);
-  }
-
-  String? _getUserId() {
-    final session = ref.read(userSessionProvider);
-     if (session == null || session.userId.isEmpty) {
-      throw StateError("User ID non disponibile nella sessione utente.");
-    }
-    return session.userId;
+    carte.removeAt(index);
+    notifyListeners();
   }
 }

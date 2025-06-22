@@ -1,51 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:progmobile_flutter/core/providers.dart';
 import 'package:progmobile_flutter/core/routes.dart';
-import 'package:progmobile_flutter/viewmodels/state/login_state.dart';
+import 'package:progmobile_flutter/repositories/user_repository.dart';
+import 'package:progmobile_flutter/viewmodels/login_viewmodel.dart';
 
-// Schermata di login per l'utente (giocatore)
-// Estende ConsumerWidget per usare Riverpod (ref.watch, ref.read, ref.listen)
-class LoginScreen extends ConsumerWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Stato attuale del form di login (contiene isLoading, error, success)
-    final state = ref.watch(loginViewModelProvider);
+  State<LoginScreen> createState() => _LoginScreenState();
+}
 
-    // ViewModel per chiamare i metodi tipo setEmail, setPassword, login
-    final vm = ref.read(loginViewModelProvider.notifier);
+class _LoginScreenState extends State<LoginScreen> {
+  late final LoginViewModel _viewModel;
 
-    // Ascoltiamo i cambiamenti di stato per fare navigazione o mostrare errori
-    ref.listen<LoginState>(loginViewModelProvider, (prev, next) {
-      // Se il login ha avuto successo (success == true), navighiamo alla home
-      if (next.success && prev?.success != true) {
-        if (next.role == "Giocatore") {
-          Navigator.pushReplacementNamed(context, AppRoutes.homeGiocatore);
-        } else if (next.role == "Admin") {
-          Navigator.pushReplacementNamed(context, AppRoutes.homeAdmin);
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Ruolo non riconosciuto")),
-          );
-        }
-      }
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = LoginViewModel(UserRepository());
+    _viewModel.addListener(_onViewModelChanged);
+  }
 
-      // Se c'è un errore nuovo, lo mostriamo con uno SnackBar
-      else if (next.error != null && next.error != prev?.error) {
+  @override
+  void dispose() {
+    _viewModel.removeListener(_onViewModelChanged);
+    super.dispose();
+  }
+
+  void _onViewModelChanged() {
+    // Cambio di stato nel viewmodel
+    setState(() {});
+
+    // Gestione della navigazione dopo il login
+    if (_viewModel.success) {
+      if (_viewModel.role == "Giocatore") {
+        Navigator.pushReplacementNamed(context, AppRoutes.homeGiocatore);
+      } else if (_viewModel.role == "Admin") {
+        Navigator.pushReplacementNamed(context, AppRoutes.homeAdmin);
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.error!)),
+          const SnackBar(content: Text('Ruolo non riconosciuto')),
         );
       }
-    });
+    }
 
+    // Gestione errori
+    if (_viewModel.error != null && _viewModel.error!.isNotEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_viewModel.error!)),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/image/sfondo1.png'), // Percorso dell'immagine di sfondo
-            fit: BoxFit.cover, // Adatta l'immagine allo schermo
+            image: AssetImage('assets/image/sfondo1.png'),
+            fit: BoxFit.cover,
           ),
         ),
         child: Padding(
@@ -55,51 +68,49 @@ class LoginScreen extends ConsumerWidget {
             children: [
               // Campo email
               TextField(
-                onChanged: vm.setEmail, // aggiorna lo stato nel ViewModel
+                onChanged: _viewModel.setEmail,
                 decoration: const InputDecoration(
                   labelText: 'Email',
                   border: OutlineInputBorder(),
-                  filled: true, // Riempi il campo
-                  fillColor: Colors.white, // Colore di riempimento
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
                 keyboardType: TextInputType.emailAddress,
               ),
-
               const SizedBox(height: 16),
 
               // Campo password
               TextField(
-                onChanged: vm.setPassword, // aggiorna lo stato nel ViewModel
+                onChanged: _viewModel.setPassword,
                 decoration: const InputDecoration(
                   labelText: 'Password',
                   border: OutlineInputBorder(),
-                  filled: true, // Riempi il campo
-                  fillColor: Colors.white, // Colore di riempimento
+                  filled: true,
+                  fillColor: Colors.white,
                 ),
-                obscureText: true, // nasconde i caratteri digitati
+                obscureText: true,
               ),
-
               const SizedBox(height: 24),
 
-              // Se è in caricamento, mostra spinner
-              state.isLoading
+              // Bottone di login o loader
+              _viewModel.isLoading
                   ? const CircularProgressIndicator()
-              // Altrimenti mostra il bottone di login
                   : SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: vm.login, // chiama la funzione login del ViewModel
+                  onPressed: _viewModel.login,
                   child: const Text('Login'),
                 ),
               ),
-
               const SizedBox(height: 12),
 
-              // Link per andare alla schermata di registrazione
+              // Link alla schermata di registrazione
               TextButton(
-                onPressed: () =>
-                    Navigator.pushNamed(context, AppRoutes.register),
-                child: const Text("Non hai un account? Registrati"),
+                onPressed: () => Navigator.pushNamed(
+                  context,
+                  AppRoutes.register,
+                ),
+                child: const Text('Non hai un account? Registrati'),
               ),
             ],
           ),

@@ -1,57 +1,73 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:progmobile_flutter/core/providers.dart';
-import 'package:progmobile_flutter/core/user_session.dart';
-import 'package:progmobile_flutter/viewmodels/state/login_state.dart';
+import 'package:flutter/foundation.dart';
 import '../repositories/user_repository.dart';
+import '../core/user_session.dart';
 
-class LoginViewModel extends Notifier<LoginState> {
-  late final UserRepository _userRepository;
+class LoginViewModel extends ChangeNotifier {
+  final UserRepository _userRepository;
 
-  @override
-  LoginState build() {
-    _userRepository = ref.read(userRepositoryProvider);
-    return LoginState(); // stato iniziale
+  LoginViewModel(this._userRepository);
+
+  String email = '';
+  String password = '';
+  String role = '';
+  bool isLoading = false;
+  bool success = false;
+  String? error;
+
+  UserSession? currentUserSession;
+
+  void setEmail(String value) {
+    email = value;
+    notifyListeners();
   }
 
-  void setEmail(String email) {
-    state = state.copyWith(email: email);
-  }
-
-  void setPassword(String password) {
-    state = state.copyWith(password: password);
+  void setPassword(String value) {
+    password = value;
+    notifyListeners();
   }
 
   Future<void> login() async {
-    state = state.copyWith(isLoading: true, success: false, error: null);
+    isLoading = true;
+    success = false;
+    error = null;
+    notifyListeners();
 
     try {
       final userCheck = await _userRepository.loginWithEmailAndPassword(
-        state.email,
-        state.password,
+        email,
+        password,
       );
 
-      final user = await _userRepository.fetchUserById(userCheck!.uid);
+      if (userCheck == null) {
+        isLoading = false;
+        error = 'Credenziali non valide';
+        notifyListeners();
+        return;
+      }
+
+      final user = await _userRepository.fetchUserById(userCheck.uid);
 
       if (user != null) {
-        ref.read(userSessionProvider.notifier).state = UserSession(
+        UserSessionManager().session = UserSession(
           userId: user.id,
           ruolo: user.ruolo,
-          nameAndSurname: "${user.name} ${user.cognome}"
+          nameAndSurname: '${user.name} ${user.cognome}',
         );
-        state = state.copyWith(isLoading: false, success: true, role: user.ruolo);
+
+        role = user.ruolo;
+        success = true;
+        isLoading = false;
       } else {
-        state = state.copyWith(
-          isLoading: false,
-          success: false,
-          error: 'Credenziali non valide',
-        );
+        isLoading = false;
+        success = false;
+        error = 'Utente non trovato';
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        success: false,
-        error: 'Login fallito: ${e.toString()}',
-      );
+      isLoading = false;
+      success = false;
+      error = 'Errore nel login: $e';
     }
+
+    notifyListeners();
   }
 }

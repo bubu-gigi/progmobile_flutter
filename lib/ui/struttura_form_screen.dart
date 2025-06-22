@@ -1,24 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:progmobile_flutter/data/collections/struttura.dart';
 import 'package:progmobile_flutter/data/collections/campo.dart';
+import 'package:progmobile_flutter/data/collections/struttura.dart';
+import 'package:progmobile_flutter/repositories/campo_repository.dart';
 import 'package:progmobile_flutter/ui/components/campo_dialog.dart';
 import 'package:progmobile_flutter/ui/components/google_places_autocomplete.dart';
-import '../core/providers.dart';
+import 'package:progmobile_flutter/viewmodels/strutture_viewmodel.dart';
+import 'package:progmobile_flutter/repositories/struttura_repository.dart';
 
-class StrutturaFormScreen extends ConsumerStatefulWidget {
+class StrutturaFormScreen extends StatefulWidget {
   final Struttura? strutturaDaModificare;
   final List<Campo>? campiEsistenti;
 
-  const StrutturaFormScreen({super.key, this.strutturaDaModificare, this.campiEsistenti});
+  const StrutturaFormScreen({
+    super.key,
+    this.strutturaDaModificare,
+    this.campiEsistenti,
+  });
 
   @override
-  ConsumerState<StrutturaFormScreen> createState() => _StrutturaFormScreenState();
+  State<StrutturaFormScreen> createState() => _StrutturaFormScreenState();
 }
 
-class _StrutturaFormScreenState extends ConsumerState<StrutturaFormScreen> {
+class _StrutturaFormScreenState extends State<StrutturaFormScreen> {
+  late final StruttureViewModel viewModel;
+
   late TextEditingController _nomeController;
   late TextEditingController _indirizzoController;
 
@@ -31,15 +38,27 @@ class _StrutturaFormScreenState extends ConsumerState<StrutturaFormScreen> {
   @override
   void initState() {
     super.initState();
-    _nomeController = TextEditingController(text: widget.strutturaDaModificare?.nome ?? '');
-    _indirizzoController = TextEditingController(text: widget.strutturaDaModificare?.indirizzo ?? '');
+
+    // Qui inizializzo direttamente il viewModel
+    viewModel = StruttureViewModel(StrutturaRepository(), CampoRepository());
+
+    _nomeController = TextEditingController(
+      text: widget.strutturaDaModificare?.nome ?? '',
+    );
+
+    _indirizzoController = TextEditingController(
+      text: widget.strutturaDaModificare?.indirizzo ?? '',
+    );
+
     campi = widget.campiEsistenti?.toList() ?? [];
+
     latLng = widget.strutturaDaModificare != null
         ? LatLng(
       widget.strutturaDaModificare!.latitudine,
       widget.strutturaDaModificare!.longitudine,
     )
         : null;
+
     citta = widget.strutturaDaModificare?.citta;
   }
 
@@ -50,12 +69,15 @@ class _StrutturaFormScreenState extends ConsumerState<StrutturaFormScreen> {
     super.dispose();
   }
 
-
   Future<String> _getCittaFromLatLng(double lat, double lng) async {
     try {
-      final placemarks = await placemarkFromCoordinates(lat, lng, localeIdentifier: "it_IT");
+      final placemarks = await placemarkFromCoordinates(
+        lat,
+        lng,
+        localeIdentifier: "it_IT",
+      );
       return placemarks.first.locality ?? '';
-    } catch (e) {
+    } catch (_) {
       return '';
     }
   }
@@ -63,28 +85,29 @@ class _StrutturaFormScreenState extends ConsumerState<StrutturaFormScreen> {
   Future<void> _salvaStruttura() async {
     if (latLng == null || _nomeController.text.isEmpty) return;
 
-    final struttura = (widget.strutturaDaModificare?.copyWith(
+    final struttura = widget.strutturaDaModificare != null
+        ? widget.strutturaDaModificare!.copyWith(
       nome: _nomeController.text,
       indirizzo: _indirizzoController.text,
       citta: citta ?? '',
       latitudine: latLng!.latitude,
       longitudine: latLng!.longitude,
       sportPraticabili: campi.map((c) => c.sport).toSet().toList(),
-    ) ??
-        Struttura(
-          id: '',
-          nome: _nomeController.text,
-          indirizzo: _indirizzoController.text,
-          citta: citta ?? '',
-          latitudine: latLng!.latitude,
-          longitudine: latLng!.longitude,
-          sportPraticabili: campi.map((c) => c.sport).toSet().toList(),
-        ));
+    )
+        : Struttura(
+      id: '',
+      nome: _nomeController.text,
+      indirizzo: _indirizzoController.text,
+      citta: citta ?? '',
+      latitudine: latLng!.latitude,
+      longitudine: latLng!.longitude,
+      sportPraticabili: campi.map((c) => c.sport).toSet().toList(),
+    );
 
     if (widget.strutturaDaModificare != null) {
-      await ref.read(struttureViewModelProvider.notifier).aggiornaStruttura(struttura);
+      await viewModel.aggiornaStruttura(struttura);
     } else {
-      await ref.read(struttureViewModelProvider.notifier).aggiungiStruttura(struttura);
+      await viewModel.aggiungiStruttura(struttura);
     }
 
     Navigator.pop(context); // Torniamo alla lista
@@ -92,23 +115,16 @@ class _StrutturaFormScreenState extends ConsumerState<StrutturaFormScreen> {
 
   Future<void> _eliminaStruttura() async {
     if (widget.strutturaDaModificare == null) return;
-    await ref.read(struttureViewModelProvider.notifier).eliminaStruttura(
-      widget.strutturaDaModificare!.id,
-    );
+    await viewModel.eliminaStruttura(widget.strutturaDaModificare!.id);
     Navigator.pop(context);
   }
 
   void _aggiungiCampo() {
-    setState(() {
-      campoInModifica = null;
-    });
     showDialog(
       context: context,
       builder: (_) => CampoDialog(
         campo: null,
-        onCampoSalvato: (c) {
-          setState(() => campi.add(c));
-        },
+        onCampoSalvato: (c) => setState(() => campi.add(c)),
       ),
     );
   }
@@ -130,6 +146,7 @@ class _StrutturaFormScreenState extends ConsumerState<StrutturaFormScreen> {
   @override
   Widget build(BuildContext context) {
     final isEdit = widget.strutturaDaModificare != null;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(isEdit ? 'Modifica struttura' : 'Nuova struttura'),
@@ -143,23 +160,16 @@ class _StrutturaFormScreenState extends ConsumerState<StrutturaFormScreen> {
               decoration: const InputDecoration(labelText: 'Nome struttura'),
             ),
             const SizedBox(height: 8),
-            // GooglePlacesAutocomplete
             GoogleAutocompleteField(
-              onAddressSelected: (address) {
-                setState(() {
-                  _indirizzoController.text = address;
-                });
-              },
-              onCitySelected: (city) {
-                setState(() {
-                  citta = city;
-                });
-              },
+              onAddressSelected: (address) =>
+                  setState(() => _indirizzoController.text = address),
+              onCitySelected: (city) => setState(() => citta = city),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: _indirizzoController,
-              decoration: const InputDecoration(labelText: 'Indirizzo completo'),
+              decoration: const InputDecoration(
+                  labelText: 'Indirizzo completo'),
               readOnly: true,
             ),
             const SizedBox(height: 16),
@@ -169,7 +179,10 @@ class _StrutturaFormScreenState extends ConsumerState<StrutturaFormScreen> {
             ),
             const SizedBox(height: 8),
             if (campi.isNotEmpty) ...[
-              const Text('Campi aggiunti:', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                'Campi aggiunti:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               for (final campo in campi)
                 ListTile(
                   title: Text('${campo.nomeCampo} (${campo.sport.name})'),
@@ -182,7 +195,8 @@ class _StrutturaFormScreenState extends ConsumerState<StrutturaFormScreen> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete),
-                        onPressed: () => setState(() => campi.remove(campo)),
+                        onPressed: () =>
+                            setState(() => campi.remove(campo)),
                       ),
                     ],
                   ),
@@ -195,7 +209,8 @@ class _StrutturaFormScreenState extends ConsumerState<StrutturaFormScreen> {
             ),
             if (isEdit)
               ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                style:
+                ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 onPressed: _eliminaStruttura,
                 child: const Text('Elimina struttura'),
               ),

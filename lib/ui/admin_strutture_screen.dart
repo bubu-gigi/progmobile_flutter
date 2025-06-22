@@ -1,27 +1,50 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:progmobile_flutter/repositories/campo_repository.dart';
+import 'package:progmobile_flutter/repositories/struttura_repository.dart';
 import 'package:progmobile_flutter/ui/components/mappa_strutture_con_filtri.dart';
 import 'package:progmobile_flutter/ui/struttura_form_screen.dart';
-import '../core/providers.dart';
+import 'package:progmobile_flutter/viewmodels/strutture_viewmodel.dart';
 
-class AdminStruttureScreen extends ConsumerStatefulWidget {
+class AdminStruttureScreen extends StatefulWidget {
   const AdminStruttureScreen({super.key});
 
   @override
-  ConsumerState<AdminStruttureScreen> createState() => _AdminStruttureScreenState();
+  State<AdminStruttureScreen> createState() => _AdminStruttureScreenState();
 }
 
-class _AdminStruttureScreenState extends ConsumerState<AdminStruttureScreen> {
-  void _goToDettaglio(String id) {
+class _AdminStruttureScreenState extends State<AdminStruttureScreen> {
+  late final StruttureViewModel viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel = StruttureViewModel(StrutturaRepository(), CampoRepository());
+    viewModel.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    viewModel.removeListener(() => setState(() {}));
+    super.dispose();
+  }
+
+  void _goToDettaglio(String id) async {
+    final struttura = viewModel.strutture.firstWhere((s) => s.id == id);
+    await viewModel.caricaCampi(struttura.id);
+    final campi = viewModel.strutturaDettaglioCampi;
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => const StrutturaFormScreen(),
+        builder: (_) => StrutturaFormScreen(
+          strutturaDaModificare: struttura,
+          campiEsistenti: campi,
+        ),
       ),
     ).then((_) {
-      ref.read(struttureViewModelProvider.notifier).caricaStrutture();
+      viewModel.caricaStrutture();
     });
   }
+
 
   void _goToCreazione() {
     Navigator.push(
@@ -30,15 +53,13 @@ class _AdminStruttureScreenState extends ConsumerState<AdminStruttureScreen> {
         builder: (_) => const StrutturaFormScreen(),
       ),
     ).then((_) {
-      ref.read(struttureViewModelProvider.notifier).caricaStrutture();
+      viewModel.caricaStrutture();
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-    // Osserviamo lo stato del viewmodel
-    final state = ref.watch(struttureViewModelProvider);
+    final state = viewModel;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Gestisci Strutture')),
@@ -46,7 +67,6 @@ class _AdminStruttureScreenState extends ConsumerState<AdminStruttureScreen> {
           ? const Center(child: CircularProgressIndicator())
           : Column(
         children: [
-          // Mappa filtrata
           Expanded(
             child: MappaStruttureConFiltri(
               strutture: state.strutture,
@@ -55,7 +75,6 @@ class _AdminStruttureScreenState extends ConsumerState<AdminStruttureScreen> {
             ),
           ),
           const SizedBox(height: 8),
-          // Bottone per aggiungere nuova struttura
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(

@@ -1,79 +1,107 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:progmobile_flutter/core/providers.dart';
+import 'package:flutter/foundation.dart';
 import 'package:progmobile_flutter/data/collections/user.dart';
 import 'package:progmobile_flutter/repositories/user_repository.dart';
-import 'package:progmobile_flutter/viewmodels/state/register_state.dart';
 
-class EditProfileViewModel extends Notifier<RegisterState> {
-  late final UserRepository _repository;
+import '../core/user_session.dart';
 
-  @override
-  RegisterState build() {
-    _repository = ref.read(userRepositoryProvider);
-    _loadUserData();
-    return RegisterState();
+class EditProfileViewModel extends ChangeNotifier {
+  final UserRepository _repository;
+
+  EditProfileViewModel({UserRepository? repository})
+      : _repository = repository ?? UserRepository() {
+    currentUserSession = UserSessionManager().session;
+    loadUserData();
   }
 
-  void setPassword(String password) =>
-      state = state.copyWith(password: password);
 
-  void setNome(String nome) =>
-      state = state.copyWith(nome: nome);
+  // Variabili semplici, modificabili
+  String nome = '';
+  String cognome = '';
+  String email = '';
+  String codiceFiscale = '';
+  String password = '';
+  bool isLoading = false;
+  bool success = false;
+  String? error;
 
-  void setCognome(String cognome) =>
-      state = state.copyWith(cognome: cognome);
+  User? _currentUser;
+  UserSession? currentUserSession;
 
-  void setEmail(String email) =>
-      state = state.copyWith(email: email);
 
-  void setCodiceFiscale(String cf) =>
-      state = state.copyWith(codiceFiscale: cf);
+  void setNome(String value) {
+    nome = value;
+    notifyListeners();
+  }
 
-  Future<void> _loadUserData() async {
+  void setCognome(String value) {
+    cognome = value;
+    notifyListeners();
+  }
+
+  void setEmail(String value) {
+    email = value;
+    notifyListeners();
+  }
+
+  void setCodiceFiscale(String value) {
+    codiceFiscale = value;
+    notifyListeners();
+  }
+
+  void setPassword(String value) {
+    password = value;
+    notifyListeners();
+  }
+
+  Future<void> loadUserData() async {
+    isLoading = true;
+    notifyListeners();
+
     try {
-      final session = ref.read(userSessionProvider);
-      if (session == null) throw Exception('Sessione utente non trovata');
-
-      final user = await _repository.fetchUserById(session.userId);
+      final user = await _repository.fetchUserById(currentUserSession!.userId);
       if (user != null) {
-        state = state.copyWith(
-          nome: user.name,
-          cognome: user.cognome,
-          email: user.email,
-          codiceFiscale: user.codiceFiscale,
-        );
+        _currentUser = user;
+        nome = user.name;
+        cognome = user.cognome;
+        email = user.email;
+        codiceFiscale = user.codiceFiscale;
       }
     } catch (e) {
-      state = state.copyWith(error: 'Errore nel caricamento profilo: $e');
+      error = 'Errore nel caricamento profilo: $e';
     }
+
+    isLoading = false;
+    notifyListeners();
   }
 
   Future<void> submit() async {
-    state = state.copyWith(isLoading: true, error: null);
+    if (_currentUser == null) return;
+
+    isLoading = true;
+    error = null;
+    success = false;
+    notifyListeners();
 
     try {
-      final session = ref.read(userSessionProvider);
-      if (session == null) throw Exception('Sessione utente non trovata');
-
       final updatedUser = User(
-        id: session.userId,
-        name: state.nome,
-        cognome: state.cognome,
-        email: state.email,
-        codiceFiscale: state.codiceFiscale,
-        password: state.password,
-        ruolo: session.ruolo,
-        preferiti: [], // eventualmente puoi caricare quelli attuali
+        id: _currentUser!.id,
+        name: nome,
+        cognome: cognome,
+        email: email,
+        codiceFiscale: codiceFiscale,
+        password: password,
+        ruolo: _currentUser!.ruolo,
+        preferiti: _currentUser!.preferiti,
       );
 
       await _repository.updateUser(updatedUser);
 
-      state = state.copyWith(success: true, isLoading: false);
+      success = true;
     } catch (e) {
-      state = state.copyWith(
-        error: 'Errore aggiornamento profilo: $e',
-        isLoading: false,
-      );
+      error = 'Errore aggiornamento profilo: $e';
     }
+
+    isLoading = false;
+    notifyListeners();
   }
 }
