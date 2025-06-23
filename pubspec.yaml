@@ -37,4 +37,5 @@ flutter:
 
   # Aggiungi qui la sezione assets
   assets:
-    - assets/image/sfondo1.png  # Assicurati che il percorso sia corretto
+    - assets/image/sfondo1.png
+    - assets/image/sfondi3.png
