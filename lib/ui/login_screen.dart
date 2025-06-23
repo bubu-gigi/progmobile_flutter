@@ -71,9 +71,26 @@ class _LoginScreenState extends State<LoginScreen> {
                 onChanged: _viewModel.setEmail,
                 decoration: const InputDecoration(
                   labelText: 'Email',
-                  border: OutlineInputBorder(),
                   filled: true,
                   fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF6136FF), width: 2.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF6136FF), width: 2.5),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF6136FF), width: 2.0),
+                  ),
+                  disabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF6136FF), width: 2.0),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF6136FF), width: 2.0),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF6136FF), width: 2.0),
+                  ),
                 ),
                 keyboardType: TextInputType.emailAddress,
               ),
@@ -84,13 +101,32 @@ class _LoginScreenState extends State<LoginScreen> {
                 onChanged: _viewModel.setPassword,
                 decoration: const InputDecoration(
                   labelText: 'Password',
-                  border: OutlineInputBorder(),
                   filled: true,
                   fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF6136FF), width: 2.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF6136FF), width: 2.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF6136FF), width: 2.0),
+                  ),
+                  disabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF6136FF), width: 2.0),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF6136FF), width: 2.0),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF6136FF), width: 2.0),
+                  ),
                 ),
                 obscureText: true,
               ),
               const SizedBox(height: 24),
+
+
 
               // Bottone di login o loader
               _viewModel.isLoading
@@ -100,6 +136,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: ElevatedButton(
                   onPressed: _viewModel.login,
                   child: const Text('Login'),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white, backgroundColor: Color(0xFF6136FF),
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(
+                        color: Color(0xFFCFFF5E), // Colore del bordo
+                        width: 2, // Spessore del bordo
+                      ),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 12),
@@ -110,7 +157,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   context,
                   AppRoutes.register,
                 ),
-                child: const Text('Non hai un account? Registrati'),
+                child: const Text(
+                  'Non hai un account? Registrati',
+                  style: TextStyle(color: Color(0xFF6136FF)),
+                ),
               ),
             ],
           ),
