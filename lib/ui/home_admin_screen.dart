@@ -11,7 +11,7 @@ class HomeAdminScreen extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/image/sfond03.png'),
+            image: AssetImage('assets/image1/sfondi4.png'),
             fit: BoxFit.cover, // Adatta l'immagine
           ),
         ),

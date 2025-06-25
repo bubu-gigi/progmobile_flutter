@@ -67,7 +67,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/image/sfondogrigio.png'),
+            image: AssetImage('assets/image1/sfondo3.png'),
             fit: BoxFit.cover,
           ),
         ),

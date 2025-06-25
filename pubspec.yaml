@@ -37,6 +37,6 @@ flutter:
 
   # Aggiungi qui la sezione assets
   assets:
-    - assets/image/sfondo1.png
-    - assets/image/sfondo3.png
-    - assets/image/sfondogrigio.png
+    - assets/image1/sfondi4.png
+    - assets/image1/sfondo1.png
+    - assets/image1/sfondo3.png
