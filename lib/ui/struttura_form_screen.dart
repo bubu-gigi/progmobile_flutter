@@ -39,7 +39,6 @@ class _StrutturaFormScreenState extends State<StrutturaFormScreen> {
   void initState() {
     super.initState();
 
-    // Qui inizializzo direttamente il viewModel
     viewModel = StruttureViewModel(StrutturaRepository(), CampoRepository());
 
     _nomeController = TextEditingController(
@@ -151,70 +150,127 @@ class _StrutturaFormScreenState extends State<StrutturaFormScreen> {
       appBar: AppBar(
         title: Text(isEdit ? 'Modifica struttura' : 'Nuova struttura'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            TextField(
-              controller: _nomeController,
-              decoration: const InputDecoration(labelText: 'Nome struttura'),
-            ),
-            const SizedBox(height: 8),
-            GoogleAutocompleteField(
-              onAddressSelected: (address) =>
-                  setState(() => _indirizzoController.text = address),
-              onCitySelected: (city) => setState(() => citta = city),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _indirizzoController,
-              decoration: const InputDecoration(
-                  labelText: 'Indirizzo completo'),
-              readOnly: true,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _aggiungiCampo,
-              child: const Text('Aggiungi campo'),
-            ),
-            const SizedBox(height: 8),
-            if (campi.isNotEmpty) ...[
-              const Text(
-                'Campi aggiunti:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              for (final campo in campi)
-                ListTile(
-                  title: Text('${campo.nomeCampo} (${campo.sport.name})'),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () => _modificaCampo(campo),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () =>
-                            setState(() => campi.remove(campo)),
-                      ),
-                    ],
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/image1/sfondi4png"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: ListView(
+            children: [
+              TextField(
+                controller: _nomeController,
+                decoration: InputDecoration(
+                  labelText: 'Nome struttura',
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF6136FF), width: 3.0),
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.green, width: 3.0),
+                    borderRadius: BorderRadius.circular(15.0),
                   ),
                 ),
-            ],
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _salvaStruttura,
-              child: Text(isEdit ? 'Aggiorna struttura' : 'Salva struttura'),
-            ),
-            if (isEdit)
-              ElevatedButton(
-                style:
-                ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                onPressed: _eliminaStruttura,
-                child: const Text('Elimina struttura'),
               ),
-          ],
+              const SizedBox(height: 8),
+              GoogleAutocompleteField(
+                onAddressSelected: (address) =>
+                    setState(() => _indirizzoController.text = address),
+                onCitySelected: (city) => setState(() => citta = city),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _indirizzoController,
+                decoration: InputDecoration(
+                  labelText: 'Indirizzo completo',
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF6136FF), width: 3.0),
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.green, width: 3.0),
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                ),
+                readOnly: true,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _aggiungiCampo,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF6136FF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  side: BorderSide(
+                    color: Color(0xFFCFFF5E),
+                    width: 3,
+                  ),
+                ),
+                child: const Text(
+                  'Aggiungi campo',
+                  style: TextStyle(
+                    color: Colors.white, // Imposta il colore del testo in bianco
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              if (campi.isNotEmpty) ...[
+                const Text(
+                  'Campi aggiunti:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                for (final campo in campi)
+                  ListTile(
+                    title: Text('${campo.nomeCampo} (${campo.sport.name})'),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () => _modificaCampo(campo),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () =>
+                              setState(() => campi.remove(campo)),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _salvaStruttura,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF6136FF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  side: BorderSide(
+                    color: Color(0xFFCFFF5E),
+                    width: 3,
+                  ),
+                ),
+                child: Text(
+                  isEdit ? 'Aggiorna struttura' : 'Salva struttura',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              if (isEdit)
+                ElevatedButton(
+                  style:
+                  ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  onPressed: _eliminaStruttura,
+                  child: const Text('Elimina struttura'),
+                ),
+            ],
+          ),
         ),
       ),
     );
