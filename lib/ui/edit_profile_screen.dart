@@ -3,12 +3,12 @@ import 'package:progmobile_flutter/ui/components/user_form.dart';
 import 'package:progmobile_flutter/viewmodels/edit_profile_viewmodel.dart';
 
 class EditProfileScreen extends StatefulWidget {
-
   const EditProfileScreen({super.key});
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
+
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final viewModel = EditProfileViewModel();
 
@@ -22,7 +22,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     super.initState();
 
-    // 🆕 Inizializzo i controller inizialmente vuoti
     nomeController = TextEditingController();
     cognomeController = TextEditingController();
     emailController = TextEditingController();
@@ -46,7 +45,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void _onStateChanged() {
     if (mounted) {
       setState(() {
-        // 🆕 Aggiorniamo i controller quando cambia la viewModel
         nomeController.text = viewModel.nome;
         cognomeController.text = viewModel.cognome;
         emailController.text = viewModel.email;
@@ -65,20 +63,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return UserForm(
-      title: 'Modifica il tuo profilo',
-      isLoading: viewModel.isLoading,
-      onSubmit: viewModel.submit,
-      onNomeChanged: viewModel.setNome,
-      onCognomeChanged: viewModel.setCognome,
-      onEmailChanged: viewModel.setEmail,
-      onCodiceFiscaleChanged: viewModel.setCodiceFiscale,
-      onPasswordChanged: viewModel.setPassword,
-      nomeController: nomeController,
-      cognomeController: cognomeController,
-      emailController: emailController,
-      cfController: cfController,
-      passwordController: passwordController,
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/image/sfondogrigio.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: UserForm(
+          title: 'Modifica il tuo profilo',
+          isLoading: viewModel.isLoading,
+          onSubmit: viewModel.submit,
+          onNomeChanged: viewModel.setNome,
+          onCognomeChanged: viewModel.setCognome,
+          onEmailChanged: viewModel.setEmail,
+          onCodiceFiscaleChanged: viewModel.setCodiceFiscale,
+          onPasswordChanged: viewModel.setPassword,
+          nomeController: nomeController,
+          cognomeController: cognomeController,
+          emailController: emailController,
+          cfController: cfController,
+          passwordController: passwordController,
+        ),
+      ),
     );
   }
 }
