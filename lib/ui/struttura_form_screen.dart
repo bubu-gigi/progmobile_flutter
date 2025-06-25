@@ -153,7 +153,7 @@ class _StrutturaFormScreenState extends State<StrutturaFormScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/image1/sfondi4png"),
+            image: AssetImage("assets/image1/sfondo1.png"),
             fit: BoxFit.cover,
           ),
         ),
@@ -161,10 +161,13 @@ class _StrutturaFormScreenState extends State<StrutturaFormScreen> {
           padding: const EdgeInsets.all(16),
           child: ListView(
             children: [
+              const SizedBox(height: 300),
               TextField(
                 controller: _nomeController,
+                style: TextStyle(color: Colors.white), // testo bianco
                 decoration: InputDecoration(
                   labelText: 'Nome struttura',
+                  labelStyle: TextStyle(color: Colors.white70), // label bianca semitrasparente
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Color(0xFF6136FF), width: 3.0),
                     borderRadius: BorderRadius.circular(15.0),
@@ -176,16 +179,42 @@ class _StrutturaFormScreenState extends State<StrutturaFormScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              GoogleAutocompleteField(
-                onAddressSelected: (address) =>
-                    setState(() => _indirizzoController.text = address),
-                onCitySelected: (city) => setState(() => citta = city),
+              Theme(
+                data: Theme.of(context).copyWith(
+                  textSelectionTheme: TextSelectionThemeData(
+                    cursorColor: Colors.white,
+                    selectionColor: Colors.white24,
+                    selectionHandleColor: Colors.white,
+                  ),
+                  inputDecorationTheme: InputDecorationTheme(
+                    hintStyle: TextStyle(color: Colors.white70),
+                    labelStyle: TextStyle(color: Colors.white70),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      borderSide: BorderSide(color: Color(0xFF6136FF), width: 3.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      borderSide: BorderSide(color: Colors.green, width: 3),
+                    ),
+                  ),
+                  textTheme: TextTheme(
+                    titleMedium: TextStyle(color: Colors.white),
+                  ),
+                ),
+                child: GoogleAutocompleteField(
+                  onAddressSelected: (address) =>
+                      setState(() => _indirizzoController.text = address),
+                  onCitySelected: (city) => setState(() => citta = city),
+                ),
               ),
               const SizedBox(height: 8),
               TextField(
                 controller: _indirizzoController,
+                style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   labelText: 'Indirizzo completo',
+                  labelStyle: TextStyle(color: Colors.white70),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Color(0xFF6136FF), width: 3.0),
                     borderRadius: BorderRadius.circular(12.0),
@@ -197,7 +226,7 @@ class _StrutturaFormScreenState extends State<StrutturaFormScreen> {
                 ),
                 readOnly: true,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 50),
               ElevatedButton(
                 onPressed: _aggiungiCampo,
                 style: ElevatedButton.styleFrom(
