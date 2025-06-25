@@ -74,12 +74,19 @@ class _AdminStruttureScreenState extends State<AdminStruttureScreen> {
               height: double.infinity,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 5),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: _goToCreazione,
-              child: const Text('Inserisci nuova struttura'),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF6136FF)),
+                side: MaterialStateProperty.all<BorderSide>(BorderSide(color: Color(0xFFCFFF5E), width: 3)),
+              ),
+              child: const Text(
+                'Inserisci nuova struttura',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
         ],
