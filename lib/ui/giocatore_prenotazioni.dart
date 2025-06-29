@@ -36,7 +36,6 @@ class _GiocatorePrenotazioniScreenState
   void _onStateChanged() {
     if (mounted) setState(() {});
   }
-
   @override
   Widget build(BuildContext context) {
     if (viewModel.showDialog) {
@@ -44,9 +43,15 @@ class _GiocatorePrenotazioniScreenState
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: const Text("Conferma eliminazione"),
+            backgroundColor: const Color(0xFF1E1E1E),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(color: Color(0xFF6136FF), width: 2),
+            ),
+            title: const Text("Conferma eliminazione", style: TextStyle(color: Colors.white)),
             content: const Text(
               "Sei sicuro di voler annullare questa prenotazione?",
+              style: TextStyle(color: Colors.white70),
             ),
             actions: [
               TextButton(
@@ -54,14 +59,14 @@ class _GiocatorePrenotazioniScreenState
                   viewModel.annullaDialog();
                   Navigator.pop(ctx);
                 },
-                child: const Text("Annulla"),
+                child: const Text("Annulla", style: TextStyle(color: Colors.white)),
               ),
               TextButton(
                 onPressed: () async {
                   await viewModel.eliminaPrenotazione();
                   Navigator.pop(ctx);
                 },
-                child: const Text("Conferma"),
+                child: const Text("Conferma", style: TextStyle(color: Colors.redAccent)),
               ),
             ],
           ),
@@ -70,7 +75,7 @@ class _GiocatorePrenotazioniScreenState
     }
 
     return Scaffold(
-      backgroundColor: Colors.white10,
+      backgroundColor: const Color(0xFF232323),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -80,27 +85,41 @@ class _GiocatorePrenotazioniScreenState
               style: TextStyle(color: Colors.white, fontSize: 20),
             ),
             const SizedBox(height: 8),
-            DropdownButtonFormField<String>(
-              decoration: const InputDecoration(
-                labelText: "Filtra per",
-                border: OutlineInputBorder(),
+            Theme(
+              data: Theme.of(context).copyWith(
+                canvasColor: const Color(0xFF232323),
+                inputDecorationTheme: InputDecorationTheme(
+                  labelStyle: const TextStyle(color: Colors.white70),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: const BorderSide(color: Color(0xFF6136FF), width: 2),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: const BorderSide(color: Color(0xFF6136FF), width: 2),
+                  ),
+                ),
               ),
-              dropdownColor: Colors.grey[900],
-              style: const TextStyle(color: Colors.white),
-              value: viewModel.filtroSelezionato,
-              items: viewModel.opzioniFiltro
-                  .map((op) => DropdownMenuItem(
-                value: op,
-                child: Text(op),
-              ))
-                  .toList(),
-              onChanged: (val) => viewModel.setFiltro(val!),
+              child: DropdownButtonFormField<String>(
+                decoration: const InputDecoration(
+                  labelText: "Filtra per",
+                ),
+                dropdownColor: const Color(0xFF232323),
+                style: const TextStyle(color: Colors.white),
+                value: viewModel.filtroSelezionato,
+                items: viewModel.opzioniFiltro
+                    .map((op) => DropdownMenuItem(
+                  value: op,
+                  child: Text(op, style: const TextStyle(color: Colors.white)),
+                ))
+                    .toList(),
+                onChanged: (val) => viewModel.setFiltro(val!),
+              ),
             ),
-            const SizedBox(height: 16),
             if (viewModel.prenotazioniFiltrate.isEmpty)
               const Text(
                 "Nessuna prenotazione trovata",
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.white70),
               )
             else
               Expanded(
@@ -115,8 +134,7 @@ class _GiocatorePrenotazioniScreenState
                     return Card(
                       color: const Color(0xFF1E1E1E),
                       shape: RoundedRectangleBorder(
-                        side: const BorderSide(
-                            color: Color(0xFFE36BE0), width: 2),
+                        side: const BorderSide(color: Color(0xFF6136FF), width: 2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Padding(
@@ -149,23 +167,22 @@ class _GiocatorePrenotazioniScreenState
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 TextButton(
-                                  onPressed: () {
-                                    // aggiungi navigazione dettagli
-                                  },
+                                  onPressed: () => _showDettagliDialog(pren, struttura),
                                   child: const Text(
                                     "Dettagli",
-                                    style:
-                                    TextStyle(color: Color(0xFF69C9FF)),
+                                    style: TextStyle(color: Color(0xFF69C9FF)),
                                   ),
                                 ),
-                                TextButton(
-                                  onPressed: () => viewModel
-                                      .confermaEliminazionePrenotazione(pren),
-                                  child: const Text(
-                                    "Elimina",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ),
+                                if (_isPrenotazioneFutura(pren))
+                                  TextButton(
+                                    onPressed: () => viewModel.confermaEliminazionePrenotazione(pren),
+                                    child: const Text(
+                                      "Elimina",
+                                      style: TextStyle(color: Colors.redAccent),
+                                    ),
+                                  )
+                                else
+                                  const SizedBox.shrink(),
                               ],
                             )
                           ],
@@ -192,4 +209,66 @@ class _GiocatorePrenotazioniScreenState
       ),
     );
   }
+
+  void _showDettagliDialog(pren, struttura) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1E1E1E),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: const BorderSide(color: Color(0xFF6136FF), width: 2),
+        ),
+        title: const Text(
+          "Dettagli prenotazione",
+          style: TextStyle(color: Colors.white),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Struttura: ${struttura.nome}", style: const TextStyle(color: Colors.white70)),
+            Text("Campo: ${pren.campoId}", style: const TextStyle(color: Colors.white70)),
+            Text("Data: ${pren.data}", style: const TextStyle(color: Colors.white70)),
+            Text("Orario: ${pren.orarioInizio} - ${pren.orarioFine}", style: const TextStyle(color: Colors.white70)),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text("Chiudi", style: TextStyle(color: Colors.white)),
+          ),
+          if (_isPrenotazioneFutura(pren))
+            TextButton(
+              onPressed: () => viewModel.confermaEliminazionePrenotazione(pren),
+              child: const Text(
+                "Elimina",
+                style: TextStyle(color: Colors.redAccent),
+              ),
+            )
+          else
+            const SizedBox.shrink(),
+        ],
+      ),
+    );
+  }
+
+  bool _isPrenotazioneFutura(pren) {
+    final data = DateTime.tryParse(pren.data);
+    if (data == null) return false;
+
+    final partsInizio = pren.orarioInizio.split(":");
+    if (partsInizio.length < 2) return false;
+
+    final inizio = DateTime(
+      data.year,
+      data.month,
+      data.day,
+      int.tryParse(partsInizio[0]) ?? 0,
+      int.tryParse(partsInizio[1]) ?? 0,
+    );
+
+    return inizio.isAfter(DateTime.now());
+  }
+
 }
