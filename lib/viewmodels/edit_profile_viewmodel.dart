@@ -13,7 +13,6 @@ class EditProfileViewModel extends ChangeNotifier {
     loadUserData();
   }
 
-
   String nome = '';
   String cognome = '';
   String email = '';

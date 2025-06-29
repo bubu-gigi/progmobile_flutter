@@ -8,7 +8,6 @@ class AdminPrenotazioniViewModel extends ChangeNotifier {
   final PrenotazioneRepository _prenRepo;
   final StrutturaRepository _strutturaRepo;
 
-  // Variabili di stato semplici
   List<Prenotazione> prenotazioni = [];
   List<Struttura> strutture = [];
   String filtroCitta = '';

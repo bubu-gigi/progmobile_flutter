@@ -14,8 +14,6 @@ class GiocatorePrenotazioniViewModel extends ChangeNotifier {
   })  : _prenRepo = prenRepo ?? PrenotazioneRepository(),
         _strutturaRepo = strutturaRepo ?? StrutturaRepository();
 
-
-  // Stato semplice come variabili
   List<Prenotazione> prenotazioni = [];
   List<Struttura> strutture = [];
   String filtroSelezionato = "Tutte";

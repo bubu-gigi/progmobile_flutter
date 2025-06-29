@@ -8,7 +8,6 @@ class CardViewModel extends ChangeNotifier {
   final CartaRepository _repository;
   final _userSession = UserSessionManager().session;
 
-  // Stato semplice
   List<Carta> carte = [];
 
   CardViewModel(this._repository) {

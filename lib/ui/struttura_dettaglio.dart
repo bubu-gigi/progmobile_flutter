@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:progmobile_flutter/data/collections/prenotazione.dart';
-import 'package:progmobile_flutter/repositories/campo_repository.dart';
-import 'package:progmobile_flutter/repositories/prenotazione_repository.dart';
-import 'package:progmobile_flutter/repositories/struttura_repository.dart';
 import '../core/user_session.dart';
 import '../viewmodels/struttura_dettaglio_viewmodel.dart';
 import 'components/button.dart';

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:progmobile_flutter/repositories/carta_repository.dart';
 import 'package:progmobile_flutter/viewmodels/carta_viewmodel.dart';
 import 'package:progmobile_flutter/core/user_session.dart';
 import '../data/collections/enums/card_provider.dart';
