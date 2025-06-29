@@ -3,25 +3,28 @@ import 'package:progmobile_flutter/data/collections/prenotazione.dart';
 import 'package:progmobile_flutter/data/collections/struttura.dart';
 import 'package:progmobile_flutter/repositories/prenotazione_repository.dart';
 import 'package:progmobile_flutter/repositories/struttura_repository.dart';
-import 'package:progmobile_flutter/ui/components/mappa_strutture_con_filtri.dart';
+import 'package:progmobile_flutter/data/collections/enums/sport.dart';
 
-class GestisciPrenotazioniAdminScreen extends StatefulWidget {
-  const GestisciPrenotazioniAdminScreen({super.key});
+import 'components/dropdown.dart';
+
+class GestionePrenotazioniAdminScreen extends StatefulWidget {
+  const GestionePrenotazioniAdminScreen({super.key});
 
   @override
-  State<GestisciPrenotazioniAdminScreen> createState() =>
-      _GestisciPrenotazioniAdminScreenState();
+  State<GestionePrenotazioniAdminScreen> createState() => _GestionePrenotazioniAdminScreenState();
 }
 
-class _GestisciPrenotazioniAdminScreenState
-    extends State<GestisciPrenotazioniAdminScreen> {
-  final PrenotazioneRepository _prenRepo = PrenotazioneRepository();
-  final StrutturaRepository _strutturaRepo = StrutturaRepository();
+class _GestionePrenotazioniAdminScreenState extends State<GestionePrenotazioniAdminScreen> {
+  final _prenRepo = PrenotazioneRepository();
+  final _strutturaRepo = StrutturaRepository();
 
-  String filtroCitta = '';
-  String filtroSport = '';
-  List<Prenotazione> tutteLePrenotazioni = [];
-  List<Struttura> tutteLeStrutture = [];
+  List<Prenotazione> prenotazioni = [];
+  List<Struttura> strutture = [];
+
+  String? filtroCitta;
+  Sport? filtroSport;
+  String? filtroStrutturaId;
+
   bool isLoading = true;
 
   @override
@@ -31,173 +34,185 @@ class _GestisciPrenotazioniAdminScreenState
   }
 
   Future<void> _caricaDati() async {
-    final strutture = await _strutturaRepo.caricaTutte();
-    final prenotazioni = <Prenotazione>[];
+    final allStrutture = await _strutturaRepo.caricaTutte();
+    final allPren = <Prenotazione>[];
 
-    for (final s in strutture) {
-      final pren = await _prenRepo.prenotazioniStruttura(s.id);
-      prenotazioni.addAll(pren);
+    for (final struttura in allStrutture) {
+      final pren = await _prenRepo.prenotazioniStruttura(struttura.id);
+      allPren.addAll(pren);
     }
 
     setState(() {
-      tutteLePrenotazioni = prenotazioni;
-      tutteLeStrutture = strutture;
+      strutture = allStrutture;
+      prenotazioni = allPren;
       isLoading = false;
     });
   }
 
-  List<Struttura> get struttureFiltrate {
-    return tutteLeStrutture.where((s) {
-      final cittaMatch = filtroCitta.isEmpty ||
-          s.citta.toLowerCase().contains(filtroCitta.toLowerCase());
-      final sportMatch = filtroSport.isEmpty ||
-          s.sportPraticabili.any(
-                (sp) => sp.name.toLowerCase().contains(filtroSport.toLowerCase()),
-          );
-
-      return cittaMatch && sportMatch;
+  List<Prenotazione> get prenotazioniFiltrate {
+    return prenotazioni.where((p) {
+      final struttura = strutture.firstWhere(
+            (s) => s.id == p.strutturaId
+      );
+      final matchCitta = filtroCitta == null || struttura.citta == filtroCitta;
+      final matchSport = filtroSport == null || struttura.sportPraticabili.contains(filtroSport);
+      final matchStruttura = filtroStrutturaId == null || struttura.id == filtroStrutturaId;
+      return matchCitta && matchSport && matchStruttura;
     }).toList();
   }
 
-  void _mostraDettagliPrenotazioni(Struttura struttura) {
-    final prenStruttura = tutteLePrenotazioni
-        .where((p) => p.strutturaId == struttura.id)
-        .toList();
-
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Prenotazioni - ${struttura.nome}'),
-        content: prenStruttura.isEmpty
-            ? const Text('Nessuna prenotazione ancora.')
-            : SizedBox(
-          width: double.maxFinite,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: prenStruttura.length,
-            itemBuilder: (_, i) {
-              final p = prenStruttura[i];
-              return ListTile(
-                title: Text('Campo: ${p.campoId}'),
-                subtitle: Text(
-                  'Data: ${p.data} - ${p.orarioInizio} → ${p.orarioFine}',
-                ),
-                onTap: () => _mostraDettaglioSingolaPrenotazione(p),
-              );
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Chiudi'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _mostraDettaglioSingolaPrenotazione(Prenotazione p) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Dettagli prenotazione'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Campo: ${p.campoId}'),
-            Text('Data: ${p.data}'),
-            Text('Orario: ${p.orarioInizio} → ${p.orarioFine}'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Chiudi'),
-          ),
-          TextButton(
-            onPressed: () async {
-              await _eliminaPrenotazione(p);
-              Navigator.pop(ctx); // Chiudi dettagli
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Elimina'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _eliminaPrenotazione(Prenotazione p) async {
-    await _prenRepo.eliminaPrenotazione(p.id);
-    setState(() {
-      tutteLePrenotazioni.removeWhere((el) => el.id == p.id);
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Prenotazione eliminata')),
-    );
-  }
+  Set<String> get tutteLeCitta => strutture.map((s) => s.citta).toSet();
+  Set<Sport> get tuttiGliSport => strutture.expand((s) => s.sportPraticabili).toSet();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Gestione Prenotazioni')),
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF232323),
+      appBar: AppBar(
+        title: const Text('Gestione Prenotazioni'),
+        backgroundColor: const Color(0xFF232323),
+        foregroundColor: Colors.white,
+      ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: Color(0xFF6136FF)))
           : Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            const Text(
-              "Tutte le prenotazioni",
-              style: TextStyle(color: Colors.white, fontSize: 18),
+            const Text("Filtra prenotazioni", style: TextStyle(color: Colors.white, fontSize: 18)),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomDropdown<String>(
+                    label: 'Città',
+                    value: filtroCitta,
+                    items: tutteLeCitta.toList(),
+                    labelBuilder: (c) => c,
+                    onChanged: (val) => setState(() => filtroCitta = val),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: CustomDropdown<Sport>(
+                    label: 'Sport',
+                    value: filtroSport,
+                    items: tuttiGliSport.toList(),
+                    labelBuilder: (s) => s.label,
+                    onChanged: (val) => setState(() => filtroSport = val),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 8),
-            if (tutteLePrenotazioni.isEmpty)
-              const Text(
-                "Nessuna prenotazione registrata",
-                style: TextStyle(color: Colors.white70),
-              )
-            else
-              Expanded(
-                child: ListView.builder(
-                  itemCount: tutteLePrenotazioni.length,
-                  itemBuilder: (_, i) {
-                    final p = tutteLePrenotazioni[i];
-                    return Card(
-                      color: Colors.grey[900],
-                      child: ListTile(
-                        title: Text(
-                          "Campo: ${p.campoId}",
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        subtitle: Text(
-                          "Data: ${p.data} • ${p.orarioInizio} - ${p.orarioFine}",
-                          style: const TextStyle(color: Colors.white70),
-                        ),
-                        onTap: () => _mostraDettaglioSingolaPrenotazione(p),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            const SizedBox(height: 16),
-            const Divider(color: Colors.white54),
-            const SizedBox(height: 16),
-            const Text(
-              "Filtra strutture",
-              style: TextStyle(color: Colors.white, fontSize: 18),
+            CustomDropdown<String>(
+              label: 'Struttura',
+              value: filtroStrutturaId,
+              items: strutture.map((s) => s.id).toList(),
+              labelBuilder: (id) => strutture.firstWhere((s) => s.id == id).nome,
+              onChanged: (val) => setState(() => filtroStrutturaId = val),
             ),
-            const SizedBox(height: 16),
-            MappaStruttureConFiltri(
-              strutture: struttureFiltrate,
-              onStrutturaSelezionata: _mostraDettagliPrenotazioni,
-              height: 300,
+            const SizedBox(height: 20),
+            Row(
+              children: const [
+                Expanded(
+                  child: Divider(
+                    color: Colors.white24,
+                    thickness: 1,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    "Risultati",
+                    style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Expanded(
+                  child: Divider(
+                    color: Colors.white24,
+                    thickness: 1,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: prenotazioniFiltrate.isEmpty
+                  ? const Center(
+                child: Text("Nessuna prenotazione trovata", style: TextStyle(color: Colors.white70)),
+              )
+                  : ListView.separated(
+                itemCount: prenotazioniFiltrate.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (_, i) {
+                  final p = prenotazioniFiltrate[i];
+                  final struttura = strutture.firstWhere((s) => s.id == p.strutturaId);
+
+                  return Card(
+                    color: const Color(0xFF1E1E1E),
+                    shape: RoundedRectangleBorder(
+                      side: const BorderSide(color: Color(0xFF6136FF), width: 2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: ListTile(
+                      title: Text(
+                        struttura.nome,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      subtitle: Text(
+                        "Campo: ${p.campoId}\nData: ${p.data} - ${p.orarioInizio} → ${p.orarioFine}",
+                        style: const TextStyle(color: Colors.white70),
+                      ),
+                      onTap: () => _mostraDettaglio(p, struttura),
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _mostraDettaglio(Prenotazione pren, Struttura struttura) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF1E1E1E),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: const BorderSide(color: Color(0xFF6136FF), width: 2),
+        ),
+        title: const Text("Dettagli prenotazione", style: TextStyle(color: Colors.white)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Struttura: ${struttura.nome}", style: const TextStyle(color: Colors.white70)),
+            Text("Campo: ${pren.campoId}", style: const TextStyle(color: Colors.white70)),
+            Text("Data: ${pren.data}", style: const TextStyle(color: Colors.white70)),
+            Text("Orario: ${pren.orarioInizio} - ${pren.orarioFine}", style: const TextStyle(color: Colors.white70)),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text("Chiudi", style: TextStyle(color: Colors.white)),
+          ),
+          TextButton(
+            onPressed: () async {
+              await _prenRepo.eliminaPrenotazione(pren.id);
+              setState(() {
+                prenotazioni.removeWhere((p) => p.id == pren.id);
+              });
+              Navigator.of(ctx).pop();
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Prenotazione eliminata")));
+            },
+            child: const Text("Elimina", style: TextStyle(color: Colors.redAccent)),
+          ),
+        ],
       ),
     );
   }

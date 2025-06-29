@@ -4,6 +4,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:progmobile_flutter/data/collections/enums/sport.dart';
 import 'package:progmobile_flutter/data/collections/struttura.dart';
 
+import 'dropdown.dart';
+
 class MappaStruttureConFiltri extends StatefulWidget {
   final List<Struttura> strutture;
   final void Function(Struttura) onStrutturaSelezionata;
@@ -92,34 +94,21 @@ class _MappaStruttureConFiltriState extends State<MappaStruttureConFiltri> {
             child: Row(
               children: [
                 Expanded(
-                  child: _dropdownFiltro(
-                    "Città",
-                    cittaPrincipali,
-                    cittaSelezionata,
-                        (val) => setState(() => cittaSelezionata = val),
-                  ),
+                  child: CustomDropdown<String>(
+                    label: 'Città',
+                    value: cittaSelezionata,
+                    items: cittaPrincipali,
+                    labelBuilder: (c) => c,
+                    onChanged: (val) => setState(() => cittaSelezionata = val),
+                  )
                 ),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: DropdownButtonFormField<Sport>(
+                  child: CustomDropdown<Sport>(
+                    label: 'Sport',
                     value: sportSelezionato,
-                    decoration: const InputDecoration(
-                      labelText: "Sport",
-                    ),
-                    isExpanded: true,
-                    hint: const Text('Tutti', style: TextStyle(color: Colors.white70)),
-                    style: const TextStyle(color: Colors.white),
-                    dropdownColor: const Color(0xFF232323),
-                    items: [
-                      const DropdownMenuItem<Sport>(
-                        value: null,
-                        child: Text('Tutti', style: TextStyle(color: Colors.white)),
-                      ),
-                      ...sportDisponibili.map((sport) => DropdownMenuItem(
-                        value: sport,
-                        child: Text(sport.label, style: const TextStyle(color: Colors.white)),
-                      )),
-                    ],
+                    items: sportDisponibili,
+                    labelBuilder: (s) => s.label,
                     onChanged: (val) => setState(() => sportSelezionato = val),
                   ),
                 ),
@@ -153,30 +142,6 @@ class _MappaStruttureConFiltriState extends State<MappaStruttureConFiltri> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _dropdownFiltro(String label, List<String> items, String? selected, ValueChanged<String?> onChanged) {
-    return DropdownButtonFormField<String>(
-      value: selected,
-      decoration: InputDecoration(
-        labelText: label,
-      ),
-      isExpanded: true,
-      hint: const Text('Tutte', style: TextStyle(color: Colors.white70)),
-      style: const TextStyle(color: Colors.white),
-      dropdownColor: const Color(0xFF232323),
-      items: [
-        const DropdownMenuItem<String>(
-          value: null,
-          child: Text('Tutte', style: TextStyle(color: Colors.white)),
-        ),
-        ...items.map((item) => DropdownMenuItem(
-          value: item,
-          child: Text(item, style: const TextStyle(color: Colors.white)),
-        )),
-      ],
-      onChanged: onChanged,
     );
   }
 }

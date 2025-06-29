@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:progmobile_flutter/ui/admin_strutture_screen.dart';
 import 'package:progmobile_flutter/ui/edit_profile_screen.dart';
-import 'package:progmobile_flutter/ui/giocatore_prenotazioni.dart';
+import 'package:progmobile_flutter/ui/giocatore_prenotazioni_screen.dart';
 import 'package:progmobile_flutter/ui/home_admin_screen.dart';
 import 'package:progmobile_flutter/ui/home_giocatore_screen.dart';
 import 'package:progmobile_flutter/ui/struttura_dettaglio.dart';
@@ -45,7 +45,7 @@ class AppRoutes {
       case giocatorePrenotazioni:
         return MaterialPageRoute(builder: (_) => const GiocatorePrenotazioniScreen());
       case adminPrenotazioni:
-        return MaterialPageRoute(builder: (_) => const GestisciPrenotazioniAdminScreen());
+        return MaterialPageRoute(builder: (_) => const GestionePrenotazioniAdminScreen());
       case dettaglioStruttura:
         final strutturaId = settings.arguments as String;
         return MaterialPageRoute(

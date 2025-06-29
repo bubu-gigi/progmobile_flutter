@@ -3,6 +3,7 @@ import 'package:progmobile_flutter/viewmodels/carta_viewmodel.dart';
 import 'package:progmobile_flutter/core/user_session.dart';
 import '../data/collections/enums/card_provider.dart';
 import 'components/button.dart';
+import 'components/dropdown.dart';
 import 'components/text_field.dart';
 
 class AddCardScreen extends StatefulWidget {
@@ -124,38 +125,13 @@ class _AddCardScreenState extends State<AddCardScreen> {
                 validator: (value) =>
                 value == null || value.length < 3 ? 'CVV non valido' : null,
               ),
-              Theme(
-                data: Theme.of(context).copyWith(
-                  canvasColor: const Color(0xFF232323),
-                  inputDecorationTheme: InputDecorationTheme(
-                    labelStyle: const TextStyle(color: Colors.white70),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide: const BorderSide(color: Color(0xFF6136FF), width: 2),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide: const BorderSide(color: Color(0xFF6136FF), width: 2),
-                    ),
-                  ),
-                ),
-                child: DropdownButtonFormField<CardProvider>(
-                  dropdownColor: const Color(0xFF232323),
-                  style: const TextStyle(color: Colors.white),
-                  value: _selectedProvider,
-                  decoration: const InputDecoration(
-                    labelText: 'Tipo carta',
-                  ),
-                  items: CardProvider.values.map((prov) {
-                    return DropdownMenuItem(
-                      value: prov,
-                      child: Text(prov.label),
-                    );
-                  }).toList(),
-                  onChanged: (prov) => setState(() => _selectedProvider = prov),
-                  validator: (prov) =>
-                  prov == null ? 'Seleziona tipo carta' : null,
-                ),
+              CustomDropdown<CardProvider>(
+                label: 'Tipo carta',
+                value: _selectedProvider,
+                items: CardProvider.values,
+                labelBuilder: (p) => p.label,
+                onChanged: (prov) => setState(() => _selectedProvider = prov),
+                validator: (prov) => prov == null ? 'Seleziona tipo carta' : null,
               ),
               const SizedBox(height: 24),
               Button(
