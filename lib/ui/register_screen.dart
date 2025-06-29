@@ -14,7 +14,6 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   late final RegisterViewModel _viewModel;
 
-  // 🆕 Controllers per i campi
   late final TextEditingController nomeController;
   late final TextEditingController cognomeController;
   late final TextEditingController emailController;
@@ -28,7 +27,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _viewModel = RegisterViewModel(UserRepository());
     _viewModel.addListener(_onStateChanged);
 
-    // 🆕 Inizializza i controller vuoti
     nomeController = TextEditingController();
     cognomeController = TextEditingController();
     emailController = TextEditingController();
@@ -57,10 +55,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         SnackBar(content: Text(_viewModel.error)),
       );
     }
-
-    setState(() {
-      // eventuali aggiornamenti visivi
-    });
   }
 
   @override
@@ -74,8 +68,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       onEmailChanged: _viewModel.setEmail,
       onCodiceFiscaleChanged: _viewModel.setCodiceFiscale,
       onPasswordChanged: _viewModel.setPassword,
-
-      // 🆕 Passa i controller al form
       nomeController: nomeController,
       cognomeController: cognomeController,
       emailController: emailController,

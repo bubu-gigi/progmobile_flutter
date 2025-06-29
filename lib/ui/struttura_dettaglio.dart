@@ -6,6 +6,7 @@ import 'package:progmobile_flutter/repositories/prenotazione_repository.dart';
 import 'package:progmobile_flutter/repositories/struttura_repository.dart';
 import '../core/user_session.dart';
 import '../viewmodels/struttura_dettaglio_viewmodel.dart';
+import 'components/button.dart';
 
 
 class StrutturaDettaglioScreen extends StatefulWidget {
@@ -70,7 +71,8 @@ class _StrutturaDettaglioScreenState extends State<StrutturaDettaglioScreen> {
               style: const TextStyle(color: Colors.white),
             ),
             const SizedBox(height: 12),
-            ElevatedButton(
+            Button(
+              label: "Scegli data",
               onPressed: () async {
                 final primaData = DateTime.now();
                 final picked = await showDatePicker(
@@ -87,7 +89,6 @@ class _StrutturaDettaglioScreenState extends State<StrutturaDettaglioScreen> {
                   });
                 }
               },
-              child: const Text("Scegli data"),
             ),
             if (dataSelezionata != null) ...[
               Text(
@@ -135,9 +136,10 @@ class _StrutturaDettaglioScreenState extends State<StrutturaDettaglioScreen> {
                   ),
                 ),
               ],
-              ElevatedButton(
+              Button(
+                label: "Prenota selezionati",
                 onPressed: orariSelezionati.isEmpty
-                    ? null
+                    ? () {}
                     : () async {
                   for (final entry in orariSelezionati) {
                     final parts = entry.split('-');
@@ -170,7 +172,6 @@ class _StrutturaDettaglioScreenState extends State<StrutturaDettaglioScreen> {
                     orariSelezionati.clear();
                   });
                 },
-                child: const Text("Prenota selezionati"),
               ),
             ],
           ],

@@ -5,6 +5,8 @@ import 'package:progmobile_flutter/ui/components/mappa_strutture_con_filtri.dart
 import 'package:progmobile_flutter/ui/struttura_form_screen.dart';
 import 'package:progmobile_flutter/viewmodels/strutture_viewmodel.dart';
 
+import 'components/button.dart';
+
 class AdminStruttureScreen extends StatefulWidget {
   const AdminStruttureScreen({super.key});
 
@@ -75,19 +77,12 @@ class _AdminStruttureScreenState extends State<AdminStruttureScreen> {
             ),
           ),
           const SizedBox(height: 5),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _goToCreazione,
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF6136FF)),
-                side: MaterialStateProperty.all<BorderSide>(BorderSide(color: Color(0xFFCFFF5E), width: 3)),
-              ),
-              child: const Text(
-                'Inserisci nuova struttura',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
+          Button(
+            label: 'Inserisci nuova struttura',
+            onPressed: _goToCreazione,
+            backgroundColor: const Color(0xFF6136FF),
+            textColor: Colors.white,
+            borderSide: const BorderSide(color: Color(0xFFCFFF5E), width: 3),
           ),
         ],
       ),

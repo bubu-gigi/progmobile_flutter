@@ -3,6 +3,7 @@ import 'package:progmobile_flutter/repositories/carta_repository.dart';
 import 'package:progmobile_flutter/viewmodels/carta_viewmodel.dart';
 import 'package:progmobile_flutter/core/user_session.dart';
 import '../data/collections/enums/card_provider.dart';
+import 'components/button.dart';
 
 class AddCardScreen extends StatefulWidget {
   const AddCardScreen({super.key});
@@ -139,11 +140,9 @@ class _AddCardScreenState extends State<AddCardScreen> {
                 validator: (prov) => prov == null ? 'Seleziona tipo carta' : null,
               ),
               const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: _isSaving ? null : _onSubmit,
-                child: _isSaving
-                    ? const CircularProgressIndicator()
-                    : const Text('Salva'),
+              Button(
+                label: 'Salva',
+                onPressed: _onSubmit,
               ),
             ],
           ),

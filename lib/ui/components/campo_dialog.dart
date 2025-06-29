@@ -3,6 +3,7 @@ import 'package:progmobile_flutter/data/collections/campo.dart';
 import 'package:progmobile_flutter/data/collections/enums/sport.dart';
 import 'package:progmobile_flutter/data/collections/template_giornaliero.dart';
 import '../../data/collections/enums/tipologia_terreno.dart';
+import 'button.dart';
 import 'orario_dialog.dart';
 
 class CampoDialog extends StatefulWidget {
@@ -154,10 +155,10 @@ class _CampoDialogState extends State<CampoDialog> {
                 ],
               ),
             ),
-            ElevatedButton(
+            Button(
+              label: 'Aggiungi orario',
               onPressed: _aggiungiOrario,
-              child: const Text('Aggiungi orario'),
-            ),
+            )
           ],
         ),
       ),

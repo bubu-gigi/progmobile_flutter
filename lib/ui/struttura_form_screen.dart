@@ -9,6 +9,8 @@ import 'package:progmobile_flutter/ui/components/google_places_autocomplete.dart
 import 'package:progmobile_flutter/viewmodels/strutture_viewmodel.dart';
 import 'package:progmobile_flutter/repositories/struttura_repository.dart';
 
+import 'components/button.dart';
+
 class StrutturaFormScreen extends StatefulWidget {
   final Struttura? strutturaDaModificare;
   final List<Campo>? campiEsistenti;
@@ -227,24 +229,9 @@ class _StrutturaFormScreenState extends State<StrutturaFormScreen> {
                 readOnly: true,
               ),
               const SizedBox(height: 50),
-              ElevatedButton(
+              Button(
+                label: 'Aggiungi campo',
                 onPressed: _aggiungiCampo,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF6136FF),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  side: BorderSide(
-                    color: Color(0xFFCFFF5E),
-                    width: 3,
-                  ),
-                ),
-                child: const Text(
-                  'Aggiungi campo',
-                  style: TextStyle(
-                    color: Colors.white, // Imposta il colore del testo in bianco
-                  ),
-                ),
               ),
               const SizedBox(height: 8),
               if (campi.isNotEmpty) ...[
@@ -272,31 +259,16 @@ class _StrutturaFormScreenState extends State<StrutturaFormScreen> {
                   ),
               ],
               const SizedBox(height: 16),
-              ElevatedButton(
+              Button(
+                label: isEdit ? 'Aggiorna struttura' : 'Salva struttura',
                 onPressed: _salvaStruttura,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF6136FF),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  side: BorderSide(
-                    color: Color(0xFFCFFF5E),
-                    width: 3,
-                  ),
-                ),
-                child: Text(
-                  isEdit ? 'Aggiorna struttura' : 'Salva struttura',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
               ),
               if (isEdit)
-                ElevatedButton(
-                  style:
-                  ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                Button(
+                  label: 'Elimina struttura',
                   onPressed: _eliminaStruttura,
-                  child: const Text('Elimina struttura'),
+                  backgroundColor: Colors.red,
+                  borderSide: BorderSide.none,
                 ),
             ],
           ),

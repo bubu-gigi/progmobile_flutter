@@ -3,6 +3,8 @@ import 'package:progmobile_flutter/core/routes.dart';
 import 'package:progmobile_flutter/repositories/user_repository.dart';
 import 'package:progmobile_flutter/viewmodels/login_viewmodel.dart';
 
+import 'components/button.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -27,10 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _onViewModelChanged() {
-    // Cambio di stato nel viewmodel
     setState(() {});
-
-    // Gestione della navigazione dopo il login
     if (_viewModel.success) {
       if (_viewModel.role == "Giocatore") {
         Navigator.pushReplacementNamed(context, AppRoutes.homeGiocatore);
@@ -43,7 +42,6 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
 
-    // Gestione errori
     if (_viewModel.error != null && _viewModel.error!.isNotEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(_viewModel.error!)),
@@ -66,7 +64,6 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Campo email
               TextField(
                 onChanged: _viewModel.setEmail,
                 decoration: const InputDecoration(
@@ -96,7 +93,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Campo password
               TextField(
                 onChanged: _viewModel.setPassword,
                 decoration: const InputDecoration(
@@ -125,33 +121,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: true,
               ),
               const SizedBox(height: 24),
-
-
-
-              // Bottone di login o loader
               _viewModel.isLoading
                   ? const CircularProgressIndicator()
-                  : SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _viewModel.login,
-                  child: const Text('Login'),
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white, backgroundColor: Color(0xFF6136FF),
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(
-                        color: Color(0xFFCFFF5E), // Colore del bordo
-                        width: 2, // Spessore del bordo
-                      ),
-                    ),
-                  ),
-                ),
+                  : Button(
+                label: 'Login',
+                onPressed: _viewModel.login,
+                borderSide: const BorderSide(color: Color(0xFFCFFF5E), width: 2),
+                backgroundColor: const Color(0xFF6136FF),
+                textColor: Colors.white,
               ),
               const SizedBox(height: 12),
 
-              // Link alla schermata di registrazione
               TextButton(
                 onPressed: () => Navigator.pushNamed(
                   context,

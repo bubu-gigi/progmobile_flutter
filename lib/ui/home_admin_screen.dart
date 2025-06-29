@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:progmobile_flutter/core/routes.dart';
 
-// Schermata principale dell'amministratore dopo il login
+import 'components/button.dart';
+
 class HomeAdminScreen extends StatelessWidget {
   const HomeAdminScreen({super.key});
 
@@ -12,7 +13,7 @@ class HomeAdminScreen extends StatelessWidget {
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/image1/sfondi4.png'),
-            fit: BoxFit.cover, // Adatta l'immagine
+            fit: BoxFit.cover,
           ),
         ),
         child: Center(
@@ -23,67 +24,31 @@ class HomeAdminScreen extends StatelessWidget {
               const Text(
                 'BENVENUTO!',
                 style: TextStyle(
-                  fontSize: 30, // Scegli una dimensione maggiore
-                  fontWeight: FontWeight.bold, // Imposta il grassetto
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
               ),
               const SizedBox(height: 30),
-              // Bottone per modificare il profilo dell'amministratore
-              ElevatedButton(
+              Button(
                 onPressed: () {
                   Navigator.pushNamed(context, AppRoutes.editProfile);
                 },
-                child: const Text('Modifica il tuo profilo'),
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Color(0xFF6136FF),
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(
-                      color: Color(0xFFCFFF5E),
-                      width: 2,
-                    ),
-                  ),
-              ),
+                label: 'Modifica il tuo profilo',
               ),
               const SizedBox(height: 24),
-              // Bottone per gestire le strutture
-              ElevatedButton(
+              Button(
                 onPressed: () {
                   Navigator.pushNamed(context, AppRoutes.adminStrutture);
                 },
-                child: const Text('Gestisci strutture'),
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Color(0xFF6136FF),
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(
-                      color: Color(0xFFCFFF5E), // Colore del bordo
-                      width: 2, // Spessore del bordo
-                    ),
-                  ),
-              ),
+                label: 'Gestisci Strutture',
               ),
               const SizedBox(height: 24),
-              // Bottone per gestire prenotazioni
-              ElevatedButton(
+              Button(
                 onPressed: () {
                   Navigator.pushNamed(context, AppRoutes.adminPrenotazioni);
                 },
-                child: const Text('Gestisci prenotazioni'),
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Color(0xFF6136FF),
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(
-                      color: Color(0xFFCFFF5E), // Colore del bordo
-                      width: 2, // Spessore del bordo
-                    ),
-                  ),
-              ),
+                label: 'Gestisci Prenotazioni',
               ),
             ],
 

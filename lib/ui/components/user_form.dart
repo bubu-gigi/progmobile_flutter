@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'button.dart';
+
 class UserForm extends StatelessWidget {
   final String title;
   final bool isLoading;
@@ -56,21 +58,11 @@ class UserForm extends StatelessWidget {
               if (onPasswordChanged != null && passwordController != null)
                 _buildTextField(passwordController!, 'Password', onPasswordChanged!, obscureText: true),
               const SizedBox(height: 54),
-              isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : ElevatedButton(
+              Button(
+                label: title,
                 onPressed: onSubmit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFF6136FF),
-                  foregroundColor: Colors.white,
-                  side: const BorderSide(color: Color(0xFFCFFF5E), width: 3), // bordo
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                child: Text(title),
+                isLoading: isLoading,
               ),
-
             ],
           ),
         ),
