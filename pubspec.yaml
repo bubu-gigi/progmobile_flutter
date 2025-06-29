@@ -34,8 +34,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-  # Aggiungi qui la sezione assets
   assets:
     - assets/image1/sfondi4.png
     - assets/image1/sfondo1.png

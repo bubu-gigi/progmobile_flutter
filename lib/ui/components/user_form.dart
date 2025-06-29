@@ -10,7 +10,6 @@ class UserForm extends StatelessWidget {
   final void Function(String) onCodiceFiscaleChanged;
   final void Function(String)? onPasswordChanged;
 
-  // 🆕 Aggiungiamo i controller come parametri
   final TextEditingController nomeController;
   final TextEditingController cognomeController;
   final TextEditingController emailController;
@@ -37,57 +36,73 @@ class UserForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            TextFormField(
-              controller: nomeController,
-              decoration: const InputDecoration(labelText: 'Nome'),
-              onChanged: onNomeChanged,
-            ),
-            const SizedBox(height: 12),
-
-            TextFormField(
-              controller: cognomeController,
-              decoration: const InputDecoration(labelText: 'Cognome'),
-              onChanged: onCognomeChanged,
-            ),
-            const SizedBox(height: 12),
-
-            TextFormField(
-              controller: emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-              keyboardType: TextInputType.emailAddress,
-              onChanged: onEmailChanged,
-            ),
-            const SizedBox(height: 12),
-
-            TextFormField(
-              controller: cfController,
-              decoration: const InputDecoration(labelText: 'Codice Fiscale'),
-              onChanged: onCodiceFiscaleChanged,
-            ),
-            const SizedBox(height: 12),
-
-            if (onPasswordChanged != null && passwordController != null)
-              TextFormField(
-                controller: passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                onChanged: onPasswordChanged,
+      appBar: AppBar(
+        title: Text(title),
+        backgroundColor: const Color(0xFF232323),
+        foregroundColor: Colors.white,
+      ),
+      body: Container(
+        color: const Color(0xFF232323),
+        child: Padding(
+          padding: const EdgeInsets.all(26),
+          child: ListView(
+            children: [
+              const SizedBox(height: 14),
+              _buildTextField(nomeController, 'Nome', onNomeChanged),
+              _buildTextField(cognomeController, 'Cognome', onCognomeChanged),
+              _buildTextField(emailController, 'Email', onEmailChanged,
+                  keyboardType: TextInputType.emailAddress),
+              _buildTextField(cfController, 'Codice Fiscale', onCodiceFiscaleChanged),
+              if (onPasswordChanged != null && passwordController != null)
+                _buildTextField(passwordController!, 'Password', onPasswordChanged!, obscureText: true),
+              const SizedBox(height: 54),
+              isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ElevatedButton(
+                onPressed: onSubmit,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF6136FF),
+                  foregroundColor: Colors.white,
+                  side: const BorderSide(color: Color(0xFFCFFF5E), width: 3), // bordo
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                child: Text(title),
               ),
-            const SizedBox(height: 24),
 
-            isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : ElevatedButton(
-              onPressed: onSubmit,
-              child: Text(title),
-            ),
-          ],
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(
+      TextEditingController controller,
+      String label,
+      Function(String) onChanged, {
+        TextInputType? keyboardType,
+        bool obscureText = false,
+      }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        border: Border.all(color: Color(0xFF6136FF)),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: TextFormField(
+        controller: controller,
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: Colors.white70),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        ),
+        keyboardType: keyboardType,
+        obscureText: obscureText,
+        onChanged: onChanged,
       ),
     );
   }

@@ -41,8 +41,8 @@ class HomeAdminScreen extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                     side: BorderSide(
-                      color: Color(0xFFCFFF5E), // Colore del bordo
-                      width: 2, // Spessore del bordo
+                      color: Color(0xFFCFFF5E),
+                      width: 2,
                     ),
                   ),
               ),
