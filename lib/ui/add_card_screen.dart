@@ -7,14 +7,15 @@ import 'components/button.dart';
 import 'components/text_field.dart';
 
 class AddCardScreen extends StatefulWidget {
-  const AddCardScreen({super.key});
+  final CardViewModel viewModel;
+
+  const AddCardScreen({super.key, required this.viewModel});
 
   @override
   State<AddCardScreen> createState() => _AddCardScreenState();
 }
 
 class _AddCardScreenState extends State<AddCardScreen> {
-  late final CardViewModel _viewModel;
   final userSession = UserSessionManager().session;
 
   late final TextEditingController _holderController;
@@ -30,7 +31,6 @@ class _AddCardScreenState extends State<AddCardScreen> {
   @override
   void initState() {
     super.initState();
-    _viewModel = CardViewModel(CartaRepository());
 
     _holderController = TextEditingController(text: userSession?.nameAndSurname);
     _numberController = TextEditingController();
@@ -53,7 +53,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
     setState(() => _isSaving = true);
 
     try {
-      await _viewModel.addCard(
+      await widget.viewModel.addCard(
         _numberController.text.trim(),
         _holderController.text.trim(),
         _expiryController.text.trim(),

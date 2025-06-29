@@ -133,7 +133,7 @@ class _CardListScreenState extends State<CardListScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (_) => const AddCardScreen(),
+              builder: (_) => AddCardScreen(viewModel: _viewModel),
             ),
           );
         },

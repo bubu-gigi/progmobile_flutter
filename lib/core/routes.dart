@@ -10,6 +10,7 @@ import '../ui/register_screen.dart';
 import '../ui/list_card_screen.dart';
 import '../ui/add_card_screen.dart';
 import '../ui/admin_prenotazioni_screen.dart';
+import '../viewmodels/carta_viewmodel.dart';
 
 class AppRoutes {
   static const login = '/';
@@ -33,7 +34,10 @@ class AppRoutes {
       case cards:
         return MaterialPageRoute(builder: (_) => const CardListScreen());
       case addCard:
-        return MaterialPageRoute(builder: (_) => const AddCardScreen());
+        final viewModel = settings.arguments as CardViewModel;
+        return MaterialPageRoute(
+          builder: (_) => AddCardScreen(viewModel: viewModel),
+        );
       case homeGiocatore:
         return MaterialPageRoute(builder: (_) => const HomeGiocatoreScreen());
       case editProfile:
