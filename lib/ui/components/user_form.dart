@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:progmobile_flutter/ui/components/text_field.dart';
 
 import 'button.dart';
 
@@ -50,13 +51,34 @@ class UserForm extends StatelessWidget {
           child: ListView(
             children: [
               const SizedBox(height: 14),
-              _buildTextField(nomeController, 'Nome', onNomeChanged),
-              _buildTextField(cognomeController, 'Cognome', onCognomeChanged),
-              _buildTextField(emailController, 'Email', onEmailChanged,
-                  keyboardType: TextInputType.emailAddress),
-              _buildTextField(cfController, 'Codice Fiscale', onCodiceFiscaleChanged),
+              CustomTextField(
+                controller: nomeController,
+                label: 'Nome',
+                onChanged: onNomeChanged,
+              ),
+              CustomTextField(
+                controller: cognomeController,
+                label: 'Cognome',
+                onChanged: onCognomeChanged,
+              ),
+              CustomTextField(
+                controller: emailController,
+                label: 'Email',
+                onChanged: onEmailChanged,
+                keyboardType: TextInputType.emailAddress,
+              ),
+              CustomTextField(
+                controller: cfController,
+                label: 'Codice Fiscale',
+                onChanged: onCodiceFiscaleChanged,
+              ),
               if (onPasswordChanged != null && passwordController != null)
-                _buildTextField(passwordController!, 'Password', onPasswordChanged!, obscureText: true),
+                CustomTextField(
+                  controller: passwordController!,
+                  label: 'Password',
+                  onChanged: onPasswordChanged!,
+                  obscureText: true,
+                ),
               const SizedBox(height: 54),
               Button(
                 label: title,
@@ -66,35 +88,6 @@ class UserForm extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildTextField(
-      TextEditingController controller,
-      String label,
-      Function(String) onChanged, {
-        TextInputType? keyboardType,
-        bool obscureText = false,
-      }) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        border: Border.all(color: Color(0xFF6136FF)),
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: TextFormField(
-        controller: controller,
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: const TextStyle(color: Colors.white70),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-        ),
-        keyboardType: keyboardType,
-        obscureText: obscureText,
-        onChanged: onChanged,
       ),
     );
   }

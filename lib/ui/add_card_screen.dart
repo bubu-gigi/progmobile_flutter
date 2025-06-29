@@ -4,6 +4,7 @@ import 'package:progmobile_flutter/viewmodels/carta_viewmodel.dart';
 import 'package:progmobile_flutter/core/user_session.dart';
 import '../data/collections/enums/card_provider.dart';
 import 'components/button.dart';
+import 'components/text_field.dart';
 
 class AddCardScreen extends StatefulWidget {
   const AddCardScreen({super.key});
@@ -29,14 +30,9 @@ class _AddCardScreenState extends State<AddCardScreen> {
   @override
   void initState() {
     super.initState();
-    _viewModel = CardViewModel(
-      CartaRepository(),
-    );
+    _viewModel = CardViewModel(CartaRepository());
 
-    _holderController = TextEditingController(
-      text: userSession?.nameAndSurname,
-    );
-
+    _holderController = TextEditingController(text: userSession?.nameAndSurname);
     _numberController = TextEditingController();
     _expiryController = TextEditingController();
     _cvvController = TextEditingController();
@@ -78,34 +74,40 @@ class _AddCardScreenState extends State<AddCardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Aggiungi carta')),
+      appBar: AppBar(
+        title: const Text('Aggiungi carta'),
+        backgroundColor: const Color(0xFF232323),
+        foregroundColor: Colors.white,
+      ),
+      backgroundColor: const Color(0xFF232323),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: ListView(
             children: [
-              TextFormField(
+              CustomTextField(
                 controller: _holderController,
-                decoration: const InputDecoration(labelText: 'Nome intestatario'),
+                label: 'Nome intestatario',
+                onChanged: (_) {},
                 validator: (value) =>
                 value == null || value.isEmpty ? 'Campo obbligatorio' : null,
               ),
-              const SizedBox(height: 12),
-              TextFormField(
+              CustomTextField(
                 controller: _numberController,
-                decoration: const InputDecoration(labelText: 'Numero carta'),
+                label: 'Numero carta',
                 keyboardType: TextInputType.number,
                 maxLength: 16,
+                onChanged: (_) {},
                 validator: (value) =>
                 value == null || value.length != 16 ? 'Numero non valido' : null,
               ),
-              const SizedBox(height: 12),
-              TextFormField(
+              CustomTextField(
                 controller: _expiryController,
-                decoration: const InputDecoration(labelText: 'Scadenza (MM/AA)'),
+                label: 'Scadenza (MM/AA)',
                 keyboardType: TextInputType.datetime,
                 maxLength: 5,
+                onChanged: (_) {},
                 validator: (value) {
                   if (value == null || !RegExp(r'^\d{2}/\d{2}$').hasMatch(value)) {
                     return 'Formato MM/AA richiesto';
@@ -113,36 +115,54 @@ class _AddCardScreenState extends State<AddCardScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 12),
-              TextFormField(
+              CustomTextField(
                 controller: _cvvController,
-                decoration: const InputDecoration(labelText: 'CVV'),
+                label: 'CVV',
                 keyboardType: TextInputType.number,
-                maxLength: 4,
                 obscureText: true,
+                maxLength: 4,
+                onChanged: (_) {},
                 validator: (value) =>
                 value == null || value.length < 3 ? 'CVV non valido' : null,
               ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<CardProvider>(
-                value: _selectedProvider,
-                decoration: const InputDecoration(
-                  labelText: 'Tipo carta',
-                  border: OutlineInputBorder(),
+              Theme(
+                data: Theme.of(context).copyWith(
+                  canvasColor: const Color(0xFF232323),
+                  inputDecorationTheme: InputDecorationTheme(
+                    labelStyle: const TextStyle(color: Colors.white70),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: const BorderSide(color: Color(0xFF6136FF), width: 2),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: const BorderSide(color: Color(0xFF6136FF), width: 2),
+                    ),
+                  ),
                 ),
-                items: CardProvider.values.map((prov) {
-                  return DropdownMenuItem(
-                    value: prov,
-                    child: Text(prov.label),
-                  );
-                }).toList(),
-                onChanged: (prov) => setState(() => _selectedProvider = prov),
-                validator: (prov) => prov == null ? 'Seleziona tipo carta' : null,
+                child: DropdownButtonFormField<CardProvider>(
+                  dropdownColor: const Color(0xFF232323),
+                  style: const TextStyle(color: Colors.white),
+                  value: _selectedProvider,
+                  decoration: const InputDecoration(
+                    labelText: 'Tipo carta',
+                  ),
+                  items: CardProvider.values.map((prov) {
+                    return DropdownMenuItem(
+                      value: prov,
+                      child: Text(prov.label),
+                    );
+                  }).toList(),
+                  onChanged: (prov) => setState(() => _selectedProvider = prov),
+                  validator: (prov) =>
+                  prov == null ? 'Seleziona tipo carta' : null,
+                ),
               ),
               const SizedBox(height: 24),
               Button(
                 label: 'Salva',
                 onPressed: _onSubmit,
+                isLoading: _isSaving,
               ),
             ],
           ),
