@@ -4,6 +4,8 @@ import 'package:progmobile_flutter/repositories/user_repository.dart';
 import 'package:progmobile_flutter/ui/components/user_form.dart';
 import 'package:progmobile_flutter/viewmodels/register_viewmodel.dart';
 
+import '../core/helpers.dart';
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -13,6 +15,8 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   late final RegisterViewModel _viewModel;
+
+  final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController nomeController;
   late final TextEditingController cognomeController;
@@ -49,30 +53,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (_viewModel.success) {
       Navigator.pushReplacementNamed(context, AppRoutes.homeGiocatore);
     }
-
-    if (_viewModel.error.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_viewModel.error)),
-      );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return UserForm(
-      title: 'Registrati',
-      isLoading: _viewModel.isLoading,
-      onSubmit: _viewModel.register,
-      onNomeChanged: _viewModel.setNome,
-      onCognomeChanged: _viewModel.setCognome,
-      onEmailChanged: _viewModel.setEmail,
-      onCodiceFiscaleChanged: _viewModel.setCodiceFiscale,
-      onPasswordChanged: _viewModel.setPassword,
-      nomeController: nomeController,
-      cognomeController: cognomeController,
-      emailController: emailController,
-      cfController: cfController,
-      passwordController: passwordController,
+    return Form(
+      key: _formKey,
+      child: UserForm(
+        title: 'Registrati',
+        isLoading: _viewModel.isLoading,
+        onSubmit: () {
+          if (_formKey.currentState!.validate()) {
+            _viewModel.register();
+          }
+        },
+        onNomeChanged: _viewModel.setNome,
+        onCognomeChanged: _viewModel.setCognome,
+        onEmailChanged: _viewModel.setEmail,
+        onCodiceFiscaleChanged: _viewModel.setCodiceFiscale,
+        onPasswordChanged: _viewModel.setPassword,
+        nomeController: nomeController,
+        cognomeController: cognomeController,
+        emailController: emailController,
+        cfController: cfController,
+        passwordController: passwordController,
+        nomeValidator: validateNome,
+        cognomeValidator: validateCognome,
+        emailValidator: validateEmail,
+        cfValidator: validateCodiceFiscale,
+        passwordValidator: validatePassword,
+      ),
     );
   }
 }

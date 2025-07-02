@@ -28,6 +28,8 @@ mixin _$Prenotazione {
   String get data => throw _privateConstructorUsedError;
   String get orarioInizio => throw _privateConstructorUsedError;
   String get orarioFine => throw _privateConstructorUsedError;
+  String get campoNome => throw _privateConstructorUsedError;
+  String get strutturaNome => throw _privateConstructorUsedError;
   bool get pubblica => throw _privateConstructorUsedError;
 
   /// Serializes this Prenotazione to a JSON map.
@@ -55,6 +57,8 @@ abstract class $PrenotazioneCopyWith<$Res> {
     String data,
     String orarioInizio,
     String orarioFine,
+    String campoNome,
+    String strutturaNome,
     bool pubblica,
   });
 }
@@ -81,6 +85,8 @@ class _$PrenotazioneCopyWithImpl<$Res, $Val extends Prenotazione>
     Object? data = null,
     Object? orarioInizio = null,
     Object? orarioFine = null,
+    Object? campoNome = null,
+    Object? strutturaNome = null,
     Object? pubblica = null,
   }) {
     return _then(
@@ -113,6 +119,14 @@ class _$PrenotazioneCopyWithImpl<$Res, $Val extends Prenotazione>
                 ? _value.orarioFine
                 : orarioFine // ignore: cast_nullable_to_non_nullable
                       as String,
+            campoNome: null == campoNome
+                ? _value.campoNome
+                : campoNome // ignore: cast_nullable_to_non_nullable
+                      as String,
+            strutturaNome: null == strutturaNome
+                ? _value.strutturaNome
+                : strutturaNome // ignore: cast_nullable_to_non_nullable
+                      as String,
             pubblica: null == pubblica
                 ? _value.pubblica
                 : pubblica // ignore: cast_nullable_to_non_nullable
@@ -140,6 +154,8 @@ abstract class _$$PrenotazioneImplCopyWith<$Res>
     String data,
     String orarioInizio,
     String orarioFine,
+    String campoNome,
+    String strutturaNome,
     bool pubblica,
   });
 }
@@ -165,6 +181,8 @@ class __$$PrenotazioneImplCopyWithImpl<$Res>
     Object? data = null,
     Object? orarioInizio = null,
     Object? orarioFine = null,
+    Object? campoNome = null,
+    Object? strutturaNome = null,
     Object? pubblica = null,
   }) {
     return _then(
@@ -197,6 +215,14 @@ class __$$PrenotazioneImplCopyWithImpl<$Res>
             ? _value.orarioFine
             : orarioFine // ignore: cast_nullable_to_non_nullable
                   as String,
+        campoNome: null == campoNome
+            ? _value.campoNome
+            : campoNome // ignore: cast_nullable_to_non_nullable
+                  as String,
+        strutturaNome: null == strutturaNome
+            ? _value.strutturaNome
+            : strutturaNome // ignore: cast_nullable_to_non_nullable
+                  as String,
         pubblica: null == pubblica
             ? _value.pubblica
             : pubblica // ignore: cast_nullable_to_non_nullable
@@ -217,6 +243,8 @@ class _$PrenotazioneImpl implements _Prenotazione {
     required this.data,
     required this.orarioInizio,
     required this.orarioFine,
+    required this.campoNome,
+    required this.strutturaNome,
     this.pubblica = false,
   });
 
@@ -239,12 +267,16 @@ class _$PrenotazioneImpl implements _Prenotazione {
   @override
   final String orarioFine;
   @override
+  final String campoNome;
+  @override
+  final String strutturaNome;
+  @override
   @JsonKey()
   final bool pubblica;
 
   @override
   String toString() {
-    return 'Prenotazione(id: $id, userId: $userId, strutturaId: $strutturaId, campoId: $campoId, data: $data, orarioInizio: $orarioInizio, orarioFine: $orarioFine, pubblica: $pubblica)';
+    return 'Prenotazione(id: $id, userId: $userId, strutturaId: $strutturaId, campoId: $campoId, data: $data, orarioInizio: $orarioInizio, orarioFine: $orarioFine, campoNome: $campoNome, strutturaNome: $strutturaNome, pubblica: $pubblica)';
   }
 
   @override
@@ -262,6 +294,10 @@ class _$PrenotazioneImpl implements _Prenotazione {
                 other.orarioInizio == orarioInizio) &&
             (identical(other.orarioFine, orarioFine) ||
                 other.orarioFine == orarioFine) &&
+            (identical(other.campoNome, campoNome) ||
+                other.campoNome == campoNome) &&
+            (identical(other.strutturaNome, strutturaNome) ||
+                other.strutturaNome == strutturaNome) &&
             (identical(other.pubblica, pubblica) ||
                 other.pubblica == pubblica));
   }
@@ -277,6 +313,8 @@ class _$PrenotazioneImpl implements _Prenotazione {
     data,
     orarioInizio,
     orarioFine,
+    campoNome,
+    strutturaNome,
     pubblica,
   );
 
@@ -303,6 +341,8 @@ abstract class _Prenotazione implements Prenotazione {
     required final String data,
     required final String orarioInizio,
     required final String orarioFine,
+    required final String campoNome,
+    required final String strutturaNome,
     final bool pubblica,
   }) = _$PrenotazioneImpl;
 
@@ -323,6 +363,10 @@ abstract class _Prenotazione implements Prenotazione {
   String get orarioInizio;
   @override
   String get orarioFine;
+  @override
+  String get campoNome;
+  @override
+  String get strutturaNome;
   @override
   bool get pubblica;
 

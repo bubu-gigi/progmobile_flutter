@@ -64,6 +64,37 @@ class _GestionePrenotazioniAdminScreenState extends State<GestionePrenotazioniAd
   Set<String> get tutteLeCitta => strutture.map((s) => s.citta).toSet();
   Set<Sport> get tuttiGliSport => strutture.expand((s) => s.sportPraticabili).toSet();
 
+  void _eliminaPrenotazioneDiretta(Prenotazione pren) async {
+    final conferma = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Conferma eliminazione"),
+        content: const Text("Sei sicuro di voler eliminare questa prenotazione?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text("Annulla"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text("Elimina", style: TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
+
+    if (conferma == true) {
+      await _prenRepo.eliminaPrenotazione(pren.id);
+      setState(() {
+        prenotazioni.removeWhere((p) => p.id == pren.id);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Prenotazione eliminata")),
+      );
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -161,8 +192,13 @@ class _GestionePrenotazioniAdminScreenState extends State<GestionePrenotazioniAd
                         style: const TextStyle(color: Colors.white),
                       ),
                       subtitle: Text(
-                        "Campo: ${p.campoId}\nData: ${p.data} - ${p.orarioInizio} → ${p.orarioFine}",
+                        "Campo: ${p.campoNome}\nData: ${p.data} - ${p.orarioInizio} → ${p.orarioFine}",
                         style: const TextStyle(color: Colors.white70),
+                      ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.redAccent),
+                        tooltip: 'Elimina',
+                        onPressed: () => _eliminaPrenotazioneDiretta(p),
                       ),
                       onTap: () => _mostraDettaglio(p, struttura),
                     ),

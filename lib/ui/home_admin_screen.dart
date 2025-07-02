@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:progmobile_flutter/core/routes.dart';
 
+import '../core/user_session.dart';
 import 'components/button.dart';
 
 class HomeAdminScreen extends StatelessWidget {
   const HomeAdminScreen({super.key});
+
+  void _logout(BuildContext context) {
+    UserSessionManager().clear();
+    Navigator.pushReplacementNamed(context, AppRoutes.login);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +56,13 @@ class HomeAdminScreen extends StatelessWidget {
                 },
                 label: 'Gestisci Prenotazioni',
               ),
+              const SizedBox(height: 24),
+              Button(
+                label: 'Logout',
+                onPressed: () => _logout(context),
+                backgroundColor: Colors.red[700],
+              ),
             ],
-
           ),
         ),
       ),

@@ -46,8 +46,8 @@ class _StrutturaDettaglioScreenState extends State<StrutturaDettaglioScreen> {
     final campi = viewModel.campi;
 
     return Scaffold(
-      backgroundColor: Colors.black,appBar: AppBar(title: Text(struttura?.nome ?? '')),
-
+      backgroundColor: Colors.black,
+      appBar: AppBar(title: Text(struttura?.nome ?? '')),
       body: viewModel.isLoading
           ? const Center(child: CircularProgressIndicator())
           : struttura == null
@@ -146,25 +146,33 @@ class _StrutturaDettaglioScreenState extends State<StrutturaDettaglioScreen> {
                       ),
                     ),
                   ],
+                  const SizedBox(height: 20),
                   Button(
                     label: "Prenota selezionati",
                     onPressed: orariSelezionati.isEmpty
-                        ? () {}
+                        ? null
                         : () async {
                       for (final entry in orariSelezionati) {
                         final parts = entry.split('-');
                         final campoId = parts[0];
-                        final fasciaOraria = parts[1];
-                        final orarioParts =
-                        fasciaOraria.trim().split(' - ');
+                        final fasciaOraria =
+                        parts.sublist(1).join('-');
+                        final orarioParts = fasciaOraria
+                            .trim()
+                            .split(' - ');
                         final orarioInizio = orarioParts[0];
                         final orarioFine = orarioParts[1];
+
+                        final campo = campi.firstWhere(
+                                (c) => c.id == campoId);
 
                         final pren = Prenotazione(
                           id: "",
                           userId: userSession!.userId,
                           strutturaId: struttura.id,
                           campoId: campoId,
+                          strutturaNome: struttura.nome,
+                          campoNome: campo.nomeCampo,
                           data: DateFormat('dd/MM/yyyy')
                               .format(dataSelezionata!),
                           orarioInizio: orarioInizio,

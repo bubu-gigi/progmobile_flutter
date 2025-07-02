@@ -27,3 +27,37 @@ String _formatOrario(DateTime time) {
   final formatter = DateFormat.Hm();
   return formatter.format(time);
 }
+
+String? validateNome(String? value) {
+  if (value == null || value.trim().isEmpty) return 'Il nome è obbligatorio';
+  if (value.trim().length < 2) return 'Minimo 2 caratteri';
+  return null;
+}
+
+String? validateCognome(String? value) {
+  if (value == null || value.trim().isEmpty) return 'Il cognome è obbligatorio';
+  if (value.trim().length < 2) return 'Minimo 2 caratteri';
+  return null;
+}
+
+String? validateEmail(String? value) {
+  if (value == null || value.trim().isEmpty) return 'Email obbligatoria';
+  final regex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+  if (!regex.hasMatch(value.trim())) return 'Formato non valido';
+  return null;
+}
+
+String? validateCodiceFiscale(String? value) {
+  if (value == null || value.trim().isEmpty) return 'Codice fiscale obbligatorio';
+  final regex = RegExp(r'^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$');
+  if (!regex.hasMatch(value.toUpperCase())) return 'Codice fiscale non valido';
+  return null;
+}
+
+String? validatePassword(String? value) {
+  if (value == null || value.isEmpty) return 'La password è obbligatoria';
+  if (value.length < 6) return 'Minimo 6 caratteri';
+  if (!value.contains(RegExp(r'[A-Za-z]'))) return 'Deve contenere almeno una lettera';
+  if (!value.contains(RegExp(r'\d'))) return 'Deve contenere almeno un numero';
+  return null;
+}

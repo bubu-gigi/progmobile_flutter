@@ -13,6 +13,8 @@ class Prenotazione with _$Prenotazione {
     required String data,
     required String orarioInizio,
     required String orarioFine,
+    required String campoNome,
+    required String strutturaNome,
     @Default(false) bool pubblica,
   }) = _Prenotazione;
 

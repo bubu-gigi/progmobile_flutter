@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:progmobile_flutter/ui/components/user_form.dart';
 import 'package:progmobile_flutter/viewmodels/edit_profile_viewmodel.dart';
 
+import '../core/helpers.dart';
+
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
 
@@ -11,6 +13,8 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final viewModel = EditProfileViewModel();
+
+  final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController nomeController;
   late final TextEditingController cognomeController;
@@ -22,11 +26,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     super.initState();
 
-    nomeController = TextEditingController();
-    cognomeController = TextEditingController();
-    emailController = TextEditingController();
-    cfController = TextEditingController();
-    passwordController = TextEditingController();
+    nomeController = TextEditingController(text: viewModel.nome);
+    cognomeController = TextEditingController(text: viewModel.cognome);
+    emailController = TextEditingController(text: viewModel.email);
+    cfController = TextEditingController(text: viewModel.codiceFiscale);
+    passwordController = TextEditingController(text: viewModel.password);
 
     viewModel.addListener(_onStateChanged);
   }
@@ -65,26 +69,38 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/image1/sfondo3.png'),
             fit: BoxFit.cover,
           ),
         ),
-        child: UserForm(
-          title: 'Modifica il tuo profilo',
-          isLoading: viewModel.isLoading,
-          onSubmit: viewModel.submit,
-          onNomeChanged: viewModel.setNome,
-          onCognomeChanged: viewModel.setCognome,
-          onEmailChanged: viewModel.setEmail,
-          onCodiceFiscaleChanged: viewModel.setCodiceFiscale,
-          onPasswordChanged: viewModel.setPassword,
-          nomeController: nomeController,
-          cognomeController: cognomeController,
-          emailController: emailController,
-          cfController: cfController,
-          passwordController: passwordController,
+        child: Form(
+          key: _formKey,
+          child: UserForm(
+            title: 'Modifica il tuo profilo',
+            isLoading: viewModel.isLoading,
+            onSubmit: () {
+              if (_formKey.currentState!.validate()) {
+                viewModel.submit();
+              }
+            },
+            onNomeChanged: viewModel.setNome,
+            onCognomeChanged: viewModel.setCognome,
+            onEmailChanged: viewModel.setEmail,
+            onCodiceFiscaleChanged: viewModel.setCodiceFiscale,
+            onPasswordChanged: viewModel.setPassword,
+            nomeController: nomeController,
+            cognomeController: cognomeController,
+            emailController: emailController,
+            cfController: cfController,
+            passwordController: passwordController,
+            nomeValidator: validateNome,
+            cognomeValidator: validateCognome,
+            emailValidator: validateEmail,
+            cfValidator: validateCodiceFiscale,
+            passwordValidator: validatePassword,
+          ),
         ),
       ),
     );

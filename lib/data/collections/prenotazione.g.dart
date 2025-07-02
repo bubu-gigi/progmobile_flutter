@@ -15,6 +15,8 @@ _$PrenotazioneImpl _$$PrenotazioneImplFromJson(Map<String, dynamic> json) =>
       data: json['data'] as String,
       orarioInizio: json['orarioInizio'] as String,
       orarioFine: json['orarioFine'] as String,
+      campoNome: json['campoNome'] as String,
+      strutturaNome: json['strutturaNome'] as String,
       pubblica: json['pubblica'] as bool? ?? false,
     );
 
@@ -27,5 +29,7 @@ Map<String, dynamic> _$$PrenotazioneImplToJson(_$PrenotazioneImpl instance) =>
       'data': instance.data,
       'orarioInizio': instance.orarioInizio,
       'orarioFine': instance.orarioFine,
+      'campoNome': instance.campoNome,
+      'strutturaNome': instance.strutturaNome,
       'pubblica': instance.pubblica,
     };

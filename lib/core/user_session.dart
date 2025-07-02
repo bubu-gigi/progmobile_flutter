@@ -24,5 +24,9 @@ class UserSessionManager {
     _userSession = session;
   }
 
+  void clear() {
+    session = null;
+  }
+
   bool get isLoggedIn => _userSession != null;
 }
