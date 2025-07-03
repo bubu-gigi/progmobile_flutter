@@ -63,4 +63,28 @@ class LoginViewModel extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  Future<void> eliminaAccountCorrente() async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      final user = UserSessionManager().getCurrentUser();
+      if (user != null) {
+        await _userRepository.deleteUser(user.id);
+        UserSessionManager().clear();
+        success = true;
+      } else {
+        error = "Utente non trovato.";
+        success = false;
+      }
+    } catch (e) {
+      error = "Errore durante l'eliminazione: $e";
+      success = false;
+    }
+
+    isLoading = false;
+    notifyListeners();
+  }
+
 }

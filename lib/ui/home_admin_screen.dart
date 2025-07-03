@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:progmobile_flutter/core/routes.dart';
-
 import '../core/user_session.dart';
+import '../viewmodels/login_viewmodel.dart';
 import 'components/button.dart';
 
 class HomeAdminScreen extends StatelessWidget {
@@ -12,11 +13,37 @@ class HomeAdminScreen extends StatelessWidget {
     Navigator.pushReplacementNamed(context, AppRoutes.login);
   }
 
+  Future<void> _confermaEliminazione(BuildContext context) async {
+    final confermato = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Conferma eliminazione'),
+        content: const Text('Sei sicuro di voler eliminare il tuo account? L’azione è irreversibile.'),
+        actions: [
+          TextButton(
+            child: const Text('Annulla'),
+            onPressed: () => Navigator.of(ctx).pop(false),
+          ),
+          TextButton(
+            child: const Text('Elimina', style: TextStyle(color: Colors.red)),
+            onPressed: () => Navigator.of(ctx).pop(true),
+          ),
+        ],
+      ),
+    );
+
+    if (confermato == true) {
+      final vm = Provider.of<LoginViewModel>(context, listen: false);
+      await vm.eliminaAccountCorrente();
+      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (_) => false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/image1/sfondi4.png'),
             fit: BoxFit.cover,
@@ -35,32 +62,32 @@ class HomeAdminScreen extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 15),
               Button(
-                onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.editProfile);
-                },
+                onPressed: () => Navigator.pushNamed(context, AppRoutes.editProfile),
                 label: 'Modifica il tuo profilo',
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 15),
               Button(
-                onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.adminStrutture);
-                },
+                onPressed: () => Navigator.pushNamed(context, AppRoutes.adminStrutture),
                 label: 'Gestisci Strutture',
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 15),
               Button(
-                onPressed: () {
-                  Navigator.pushNamed(context, AppRoutes.adminPrenotazioni);
-                },
+                onPressed: () => Navigator.pushNamed(context, AppRoutes.adminPrenotazioni),
                 label: 'Gestisci Prenotazioni',
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 15),
               Button(
                 label: 'Logout',
                 onPressed: () => _logout(context),
                 backgroundColor: Colors.red[700],
+              ),
+              const SizedBox(height: 15),
+              Button(
+                label: 'Elimina account',
+                onPressed: () => _confermaEliminazione(context),
+                backgroundColor: Colors.black,
               ),
             ],
           ),
