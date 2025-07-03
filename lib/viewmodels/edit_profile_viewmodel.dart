@@ -9,7 +9,6 @@ class EditProfileViewModel extends ChangeNotifier {
 
   EditProfileViewModel() {
     _repository = UserRepository();
-    currentUserSession = UserSessionManager().session;
     loadUserData();
   }
 
@@ -23,7 +22,6 @@ class EditProfileViewModel extends ChangeNotifier {
   String? error;
 
   User? _currentUser;
-  UserSession? currentUserSession;
 
 
   void setNome(String value) {
@@ -56,7 +54,7 @@ class EditProfileViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final user = await _repository.fetchUserById(currentUserSession!.userId);
+      final user = await _repository.fetchUserById(UserSessionManager().getCurrentUser()!.id);
       print(user);
       if (user != null) {
         _currentUser = user;

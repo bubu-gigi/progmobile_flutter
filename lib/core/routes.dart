@@ -4,12 +4,12 @@ import 'package:progmobile_flutter/ui/edit_profile_screen.dart';
 import 'package:progmobile_flutter/ui/giocatore_prenotazioni_screen.dart';
 import 'package:progmobile_flutter/ui/home_admin_screen.dart';
 import 'package:progmobile_flutter/ui/home_giocatore_screen.dart';
-import 'package:progmobile_flutter/ui/struttura_dettaglio.dart';
 import '../ui/login_screen.dart';
 import '../ui/register_screen.dart';
 import '../ui/list_card_screen.dart';
 import '../ui/add_card_screen.dart';
 import '../ui/admin_prenotazioni_screen.dart';
+import '../ui/struttura_dettaglio_screen.dart';
 import '../viewmodels/carta_viewmodel.dart';
 
 class AppRoutes {

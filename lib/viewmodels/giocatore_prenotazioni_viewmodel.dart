@@ -18,7 +18,6 @@ class GiocatorePrenotazioniViewModel extends ChangeNotifier {
   List<Struttura> strutture = [];
   String filtroSelezionato = "Tutte";
   bool showDialog = false;
-  Prenotazione? prenotazioneDaEliminare;
 
   String? _userId;
 
@@ -71,25 +70,16 @@ class GiocatorePrenotazioniViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void confermaEliminazionePrenotazione(Prenotazione pren) {
-    prenotazioneDaEliminare = pren;
-    showDialog = true;
-    notifyListeners();
-  }
-
   void annullaDialog() {
     showDialog = false;
-    prenotazioneDaEliminare = null;
     notifyListeners();
   }
 
-  Future<void> eliminaPrenotazione() async {
-    if (prenotazioneDaEliminare == null) return;
+  Future<void> eliminaPrenotazione(Prenotazione pren) async {
     try {
-      await _prenRepo.eliminaPrenotazione(prenotazioneDaEliminare!.id);
+      await _prenRepo.eliminaPrenotazione(pren.id);
       prenotazioni = await _prenRepo.prenotazioniUtente(_userId!);
       showDialog = false;
-      prenotazioneDaEliminare = null;
       notifyListeners();
     } catch (e) {
       debugPrint('Errore eliminazione: $e');

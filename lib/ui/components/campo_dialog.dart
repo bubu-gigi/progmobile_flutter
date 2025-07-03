@@ -4,7 +4,7 @@ import 'package:progmobile_flutter/data/collections/enums/sport.dart';
 import 'package:progmobile_flutter/data/collections/template_giornaliero.dart';
 import '../../data/collections/enums/tipologia_terreno.dart';
 import 'button.dart';
-import 'orario_dialog.dart';
+import 'orario_dialog_semplice.dart';
 
 class CampoDialog extends StatefulWidget {
   final Campo? campo;
@@ -49,7 +49,7 @@ class _CampoDialogState extends State<CampoDialog> {
   void _aggiungiOrario() {
     showDialog(
       context: context,
-      builder: (_) => OrarioDialog(
+      builder: (_) => OrariDialogSemplice(
         onOrarioAdded: (orario) => setState(() => disponibilita.add(orario)),
       ),
     );

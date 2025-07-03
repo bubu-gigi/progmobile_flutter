@@ -14,8 +14,6 @@ class LoginViewModel extends ChangeNotifier {
   bool success = false;
   String? error;
 
-  UserSession? currentUserSession;
-
   void setEmail(String value) {
     email = value;
     notifyListeners();
@@ -48,12 +46,7 @@ class LoginViewModel extends ChangeNotifier {
       final user = await _userRepository.fetchUserById(userCheck.uid);
 
       if (user != null) {
-        UserSessionManager().session = UserSession(
-          userId: user.id,
-          ruolo: user.ruolo,
-          nameAndSurname: '${user.name} ${user.cognome}',
-        );
-
+        UserSessionManager().setCurrentUser(user);
         role = user.ruolo;
         success = true;
         isLoading = false;

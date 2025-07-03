@@ -16,7 +16,7 @@ class AddCardScreen extends StatefulWidget {
 }
 
 class _AddCardScreenState extends State<AddCardScreen> {
-  final userSession = UserSessionManager().session;
+  final userSession = UserSessionManager().getCurrentUser();
 
   late final TextEditingController _holderController;
   late final TextEditingController _numberController;
@@ -32,7 +32,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
   void initState() {
     super.initState();
 
-    _holderController = TextEditingController(text: userSession?.nameAndSurname);
+    _holderController = TextEditingController(  text: (userSession?.cognome ?? '') + ' ' + (userSession?.name ?? ''),);
     _numberController = TextEditingController();
     _expiryController = TextEditingController();
     _cvvController = TextEditingController();

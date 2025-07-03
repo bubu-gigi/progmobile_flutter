@@ -1,14 +1,4 @@
-class UserSession {
-  final String userId;
-  final String nameAndSurname;
-  final String ruolo;
-
-  const UserSession({
-    required this.userId,
-    required this.ruolo,
-    required this.nameAndSurname,
-  });
-}
+import '../data/collections/user.dart';
 
 class UserSessionManager {
   static final UserSessionManager _instance = UserSessionManager._internal();
@@ -16,17 +6,17 @@ class UserSessionManager {
 
   UserSessionManager._internal();
 
-  UserSession? _userSession;
+  User? _currentUser;
 
-  UserSession? get session => _userSession;
-
-  set session(UserSession? session) {
-    _userSession = session;
-  }
+  bool get isLoggedIn => _currentUser != null;
 
   void clear() {
-    session = null;
+    _currentUser = null;
   }
 
-  bool get isLoggedIn => _userSession != null;
+  void setCurrentUser(User user) {
+    _currentUser = user;
+  }
+
+  User? getCurrentUser() => _currentUser;
 }

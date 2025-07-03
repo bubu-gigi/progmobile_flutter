@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:progmobile_flutter/repositories/carta_repository.dart';
-import 'package:progmobile_flutter/core/user_session.dart';
 import 'package:progmobile_flutter/ui/add_card_screen.dart';
 import 'package:progmobile_flutter/viewmodels/carta_viewmodel.dart';
 
@@ -13,7 +12,6 @@ class CardListScreen extends StatefulWidget {
 
 class _CardListScreenState extends State<CardListScreen> {
   late final CardViewModel _viewModel;
-  final userSession = UserSessionManager().session;
 
   @override
   void initState() {

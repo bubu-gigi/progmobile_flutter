@@ -64,7 +64,11 @@ class _AdminStruttureScreenState extends State<AdminStruttureScreen> {
     final state = viewModel;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Gestisci Strutture')),
+      appBar: AppBar(
+        title: const Text('Gestisci Strutture'),
+        backgroundColor: const Color(0xFF232323),
+        foregroundColor: Colors.white,
+      ),
       body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
           : Column(

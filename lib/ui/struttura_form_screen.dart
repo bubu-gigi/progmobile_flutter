@@ -4,12 +4,12 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:progmobile_flutter/data/collections/campo.dart';
 import 'package:progmobile_flutter/data/collections/struttura.dart';
 import 'package:progmobile_flutter/repositories/campo_repository.dart';
-import 'package:progmobile_flutter/ui/components/campo_dialog.dart';
 import 'package:progmobile_flutter/ui/components/google_places_autocomplete.dart';
 import 'package:progmobile_flutter/viewmodels/strutture_viewmodel.dart';
 import 'package:progmobile_flutter/repositories/struttura_repository.dart';
 
 import 'components/button.dart';
+import 'components/campo_dialog.dart';
 
 class StrutturaFormScreen extends StatefulWidget {
   final Struttura? strutturaDaModificare;

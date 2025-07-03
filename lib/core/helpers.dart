@@ -1,23 +1,5 @@
 import 'package:intl/intl.dart';
 
-import '../data/collections/template_giornaliero.dart';
-
-List<String> generaSlotOrari(TemplateGiornaliero template) {
-  final inizio = _parseOrario(template.orarioApertura);
-  final fine = _parseOrario(template.orarioChiusura);
-  final slots = <String>[];
-
-  var current = inizio;
-  while (current.isBefore(fine)) {
-    final next = current.add(const Duration(hours: 1));
-    if (next.isAfter(fine)) break;
-    slots.add("${_formatOrario(current)} - ${_formatOrario(next)}");
-    current = next;
-  }
-
-  return slots;
-}
-
 DateTime _parseOrario(String orario) {
   final parts = orario.split(':');
   return DateTime(0, 1, 1, int.parse(parts[0]), int.parse(parts[1]));
@@ -61,3 +43,63 @@ String? validatePassword(String? value) {
   if (!value.contains(RegExp(r'\d'))) return 'Deve contenere almeno un numero';
   return null;
 }
+
+List<List<String>> raggruppaSlotConsecutivi(List<List<String>> slots) {
+  final formatter = DateFormat.Hm();
+
+  final parsedSlots = slots
+      .map((s) => [formatter.parse(s[0]), formatter.parse(s[1])])
+      .toList()
+    ..sort((a, b) => a[0].compareTo(b[0]));
+
+  if (parsedSlots.isEmpty) return [];
+
+  final gruppi = <List<List<DateTime>>>[];
+  var gruppoCorrente = <List<DateTime>>[parsedSlots.first];
+
+  for (var i = 1; i < parsedSlots.length; i++) {
+    final precedente = gruppoCorrente.last;
+    final corrente = parsedSlots[i];
+
+    if (precedente[1] == corrente[0]) {
+      gruppoCorrente.add(corrente);
+    } else {
+      gruppi.add(gruppoCorrente);
+      gruppoCorrente = [corrente];
+    }
+  }
+  gruppi.add(gruppoCorrente);
+
+  return gruppi.map((gruppo) {
+    final inizio = formatter.format(gruppo.first[0]);
+    final fine = formatter.format(gruppo.last[1]);
+    return [inizio, fine];
+  }).toList();
+}
+
+List<List<String>> generaSlotOrari(String inizio, String fine) {
+  final formatter = DateFormat.Hm(); // formato "HH:mm"
+  final startTime = formatter.parse(inizio);
+  final endTime = formatter.parse(fine);
+
+  final slots = <List<String>>[];
+
+  var current = startTime;
+  while (current.isBefore(endTime)) {
+    final next = DateTime(
+      current.year,
+      current.month,
+      current.day,
+      current.hour + 1,
+      current.minute,
+    );
+
+    if (next.isAfter(endTime)) break;
+
+    slots.add([formatter.format(current), formatter.format(next)]);
+    current = next;
+  }
+
+  return slots;
+}
+

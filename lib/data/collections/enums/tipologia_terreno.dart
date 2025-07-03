@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-@JsonEnum()
+@JsonEnum(alwaysCreate: true)
 enum TipologiaTerreno {
   ERBA_SINTETICA,
   CEMENTO,

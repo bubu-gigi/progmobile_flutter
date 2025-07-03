@@ -6,7 +6,6 @@ import '../core/user_session.dart';
 
 class CardViewModel extends ChangeNotifier {
   final CartaRepository _repository;
-  final _userSession = UserSessionManager().session;
 
   List<Carta> carte = [];
 
@@ -15,7 +14,7 @@ class CardViewModel extends ChangeNotifier {
   }
 
   Future<void> _init() async {
-    final userId = _userSession?.userId;
+    final userId = UserSessionManager().getCurrentUser()!.id;
     if (userId == null || userId.isEmpty) return;
 
     carte = await _repository.fetchCarteForUser(userId);
@@ -23,7 +22,7 @@ class CardViewModel extends ChangeNotifier {
   }
 
   Future<void> addCard(String number, String holder, String expiry, String cvv, CardProvider provider) async {
-    final userId = _userSession?.userId;
+    final userId = UserSessionManager().getCurrentUser()!.id;
     if (userId == null || userId.isEmpty) return;
 
     final match = RegExp(r'^(\d{2})/(\d{2})$').firstMatch(expiry);
