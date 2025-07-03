@@ -83,10 +83,13 @@ class _StrutturaFormScreenState extends State<StrutturaFormScreen> {
       return '';
     }
   }
+
   Future<void> _salvaStruttura() async {
+    print("prima del check");
     if (latLng == null || _nomeController.text.isEmpty) return;
 
-    final struttura = widget.strutturaDaModificare != null
+    print("Check passato");
+    final strutturaDaSalvare = widget.strutturaDaModificare != null
         ? widget.strutturaDaModificare!.copyWith(
       nome: _nomeController.text,
       indirizzo: _indirizzoController.text,
@@ -105,13 +108,11 @@ class _StrutturaFormScreenState extends State<StrutturaFormScreen> {
       sportPraticabili: campi.map((c) => c.sport).toSet().toList(),
     );
 
-    await (widget.strutturaDaModificare != null
-        ? viewModel.aggiornaStruttura(struttura)
-        : viewModel.aggiungiStruttura(struttura));
+    final strutturaSalvata = widget.strutturaDaModificare != null
+        ? await viewModel.aggiornaStruttura(strutturaDaSalvare).then((_) => strutturaDaSalvare)
+        : await viewModel.aggiungiStruttura(strutturaDaSalvare);
 
-    for (final campo in campi) {
-      await viewModel.salvaCampo(struttura.id, campo);
-    }
+    await viewModel.sincronizzaCampi(strutturaSalvata.id, campi);
 
     Navigator.pop(context);
   }
@@ -235,6 +236,7 @@ class _StrutturaFormScreenState extends State<StrutturaFormScreen> {
                   onAddressSelected: (address) =>
                       setState(() => _indirizzoController.text = address),
                   onCitySelected: (city) => setState(() => citta = city),
+                  onLatLngSelected: (pos) => setState(() => latLng = pos),
                 ),
               ),
               const SizedBox(height: 8),

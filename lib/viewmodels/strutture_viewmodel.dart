@@ -26,10 +26,12 @@ class StruttureViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> aggiungiStruttura(Struttura struttura) async {
-    await _strutturaRepository.salvaStruttura(struttura);
+  Future<Struttura> aggiungiStruttura(Struttura struttura) async {
+    final nuova = await _strutturaRepository.salvaStruttura(struttura);
     await caricaStrutture();
+    return nuova;
   }
+
 
   Future<void> aggiornaStruttura(Struttura struttura) async {
     await _strutturaRepository.aggiornaStruttura(struttura);
@@ -56,5 +58,21 @@ class StruttureViewModel extends ChangeNotifier {
       await _campoRepository.aggiornaCampo(strutturaId, campo);
     }
   }
-  
+
+
+  Future<void> sincronizzaCampi(String strutturaId, List<Campo> nuoviCampi) async {
+    final campiEsistenti = await _campoRepository.caricaCampi(strutturaId);
+
+    for (final campo in nuoviCampi) {
+      await salvaCampo(strutturaId, campo);
+    }
+
+    for (final campoEsistente in campiEsistenti) {
+      final ancoraPresente = nuoviCampi.any((c) => c.id == campoEsistente.id);
+      if (!ancoraPresente) {
+        await _campoRepository.eliminaCampo(strutturaId, campoEsistente.id);
+      }
+    }
+  }
+
 }

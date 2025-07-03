@@ -5,10 +5,11 @@ class StrutturaDao {
   final CollectionReference struttureRef =
       FirebaseFirestore.instance.collection('strutture');
 
-  Future<void> addStruttura(Struttura struttura) async {
+  Future<Struttura> addStruttura(Struttura struttura) async {
     final docRef = struttureRef.doc();
     final strutturaWithId = struttura.copyWith(id: docRef.id);
     await docRef.set(strutturaWithId.toJson());
+    return strutturaWithId;
   }
 
   Future<void> updateStruttura(Struttura struttura) async {

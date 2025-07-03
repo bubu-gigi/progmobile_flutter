@@ -3,6 +3,8 @@ import 'package:progmobile_flutter/repositories/carta_repository.dart';
 import 'package:progmobile_flutter/ui/add_card_screen.dart';
 import 'package:progmobile_flutter/viewmodels/carta_viewmodel.dart';
 
+import '../core/user_session.dart';
+
 class CardListScreen extends StatefulWidget {
   const CardListScreen({super.key});
 
@@ -151,16 +153,22 @@ class _CardListScreenState extends State<CardListScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xFF6136FF),
         foregroundColor: Colors.white,
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (_) => AddCardScreen(viewModel: _viewModel),
             ),
           );
+
+          final userId = UserSessionManager().getCurrentUser()?.id;
+          if (userId != null && userId.isNotEmpty) {
+            await _viewModel.caricaCartePerUtente(userId);
+          }
         },
         child: const Icon(Icons.add),
       ),
+
     );
   }
 }

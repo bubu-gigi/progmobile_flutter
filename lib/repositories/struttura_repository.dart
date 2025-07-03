@@ -4,7 +4,7 @@ import '../data/dao/struttura_dao.dart';
 class StrutturaRepository {
   final StrutturaDao _dao = StrutturaDao();
 
-  Future<void> salvaStruttura(Struttura struttura) {
+  Future<Struttura> salvaStruttura(Struttura struttura) {
     return _dao.addStruttura(struttura);
   }
 

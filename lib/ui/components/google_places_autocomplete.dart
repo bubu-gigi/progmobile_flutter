@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places_sdk/flutter_google_places_sdk.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart' as gmaps;
 
 class GoogleAutocompleteField extends StatefulWidget {
   final ValueChanged<String> onAddressSelected;
   final ValueChanged<String> onCitySelected;
+  final ValueChanged<gmaps.LatLng> onLatLngSelected;
 
   const GoogleAutocompleteField({
     super.key,
     required this.onAddressSelected,
     required this.onCitySelected,
+    required this.onLatLngSelected,
   });
 
   @override
@@ -44,12 +47,8 @@ class _GoogleAutocompleteFieldState extends State<GoogleAutocompleteField> {
     final lng = details.place?.latLng?.lng;
 
     if (lat != null && lng != null) {
-      // Passa l'indirizzo completo
-      widget.onAddressSelected(
-        firstSuggestion.fullText,
-      );
+      widget.onAddressSelected(firstSuggestion.fullText);
 
-      // Ottieni la città
       final placemarks = await placemarkFromCoordinates(
         lat,
         lng,
@@ -58,6 +57,8 @@ class _GoogleAutocompleteFieldState extends State<GoogleAutocompleteField> {
 
       final city = placemarks.first.locality ?? '';
       widget.onCitySelected(city);
+
+      widget.onLatLngSelected(gmaps.LatLng(lat, lng));
     }
   }
 
