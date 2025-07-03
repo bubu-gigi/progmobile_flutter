@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:progmobile_flutter/data/collections/campo.dart';
+import 'package:progmobile_flutter/data/collections/enums/sport.dart';
 import 'package:progmobile_flutter/data/collections/struttura.dart';
 import 'package:progmobile_flutter/repositories/campo_repository.dart';
 import 'package:progmobile_flutter/ui/components/google_places_autocomplete.dart';
@@ -116,9 +117,34 @@ class _StrutturaFormScreenState extends State<StrutturaFormScreen> {
 
   Future<void> _eliminaStruttura() async {
     if (widget.strutturaDaModificare == null) return;
-    await viewModel.eliminaStruttura(widget.strutturaDaModificare!.id);
-    Navigator.pop(context);
+
+    final conferma = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Conferma eliminazione"),
+        content: const Text("Vuoi davvero eliminare questa struttura?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text("Annulla"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text("Elimina", style: TextStyle(color: Colors.redAccent)),
+          ),
+        ],
+      ),
+    );
+
+    if (conferma == true) {
+      await viewModel.eliminaStruttura(widget.strutturaDaModificare!.id);
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Struttura eliminata")),
+      );
+    }
   }
+
 
   void _aggiungiCampo() {
     showDialog(
@@ -240,21 +266,60 @@ class _StrutturaFormScreenState extends State<StrutturaFormScreen> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 for (final campo in campi)
-                  ListTile(
-                    title: Text('${campo.nomeCampo} (${campo.sport.name})'),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.edit),
-                          onPressed: () => _modificaCampo(campo),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () =>
-                              setState(() => campi.remove(campo)),
-                        ),
-                      ],
+                  Card(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: const BorderSide(color: Color(0xFF6136FF), width: 2),
+                    ),
+                    margin: const EdgeInsets.symmetric(vertical: 6),
+                    child: ListTile(
+                      title: Text(
+                        campo.nomeCampo,
+                        style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        campo.sport.label,
+                        style: const TextStyle(color: Colors.black54),
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.deepPurple),
+                            onPressed: () => _modificaCampo(campo),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.redAccent),
+                            onPressed: () async {
+                              final conferma = await showDialog<bool>(
+                                context: context,
+                                builder: (ctx) => AlertDialog(
+                                  title: const Text("Conferma eliminazione"),
+                                  content: const Text("Vuoi davvero eliminare questo campo?"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.of(ctx).pop(false),
+                                      child: const Text("Annulla"),
+                                    ),
+                                    TextButton(
+                                      onPressed: () => Navigator.of(ctx).pop(true),
+                                      child: const Text("Elimina", style: TextStyle(color: Colors.redAccent)),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              if (conferma == true) {
+                                setState(() => campi.remove(campo));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text("Campo eliminato")),
+                                );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
               ],
@@ -264,11 +329,14 @@ class _StrutturaFormScreenState extends State<StrutturaFormScreen> {
                 onPressed: _salvaStruttura,
               ),
               if (isEdit)
-                Button(
-                  label: 'Elimina struttura',
-                  onPressed: _eliminaStruttura,
-                  backgroundColor: Colors.red,
-                  borderSide: BorderSide.none,
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: Button(
+                    label: 'Elimina struttura',
+                    onPressed: _eliminaStruttura,
+                    backgroundColor: Colors.red,
+                    borderSide: BorderSide.none,
+                  ),
                 ),
             ],
           ),
