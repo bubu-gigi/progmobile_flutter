@@ -8,21 +8,35 @@ class CardViewModel extends ChangeNotifier {
   final CartaRepository _repository;
 
   List<Carta> carte = [];
+  String? cartaSelezionataId;
+  String? errore;
 
   CardViewModel(this._repository) {
     _init();
   }
 
   Future<void> _init() async {
-    final userId = UserSessionManager().getCurrentUser()!.id;
+    final userId = UserSessionManager().getCurrentUser()?.id;
     if (userId == null || userId.isEmpty) return;
 
     carte = await _repository.fetchCarteForUser(userId);
     notifyListeners();
   }
 
-  Future<void> addCard(String number, String holder, String expiry, String cvv, CardProvider provider) async {
-    final userId = UserSessionManager().getCurrentUser()!.id;
+  Future<void> caricaCartePerUtente(String userId) async {
+    carte = await _repository.fetchCarteForUser(userId);
+    print(carte);
+    notifyListeners();
+  }
+
+  Future<void> addCard(
+      String number,
+      String holder,
+      String expiry,
+      String cvv,
+      CardProvider provider,
+      ) async {
+    final userId = UserSessionManager().getCurrentUser()?.id;
     if (userId == null || userId.isEmpty) return;
 
     final match = RegExp(r'^(\d{2})/(\d{2})$').firstMatch(expiry);
@@ -42,6 +56,7 @@ class CardViewModel extends ChangeNotifier {
       expirationYear: year,
       cvv: cvv,
       provider: provider,
+      isDefault: false,
     );
 
     final saved = await _repository.addCarta(carta);
@@ -53,6 +68,32 @@ class CardViewModel extends ChangeNotifier {
     final carta = carte[index];
     await _repository.removeCarta(carta.id);
     carte.removeAt(index);
+    notifyListeners();
+  }
+
+  Future<void> selezionaCarta(String id) async {
+    try {
+      final userId = UserSessionManager().getCurrentUser()?.id;
+      if (userId == null) return;
+
+      final cartaDaSelezionare = carte.firstWhere(
+            (carta) => carta.id == id,
+        orElse: () => throw Exception('Carta non trovata'),
+      );
+
+      for (final carta in carte) {
+        if (carta.isDefault && carta.id != id) {
+          await _repository.updateCarta(carta.copyWith(isDefault: false));
+        }
+      }
+
+      await _repository.updateCarta(cartaDaSelezionare.copyWith(isDefault: true));
+      cartaSelezionataId = id;
+      await caricaCartePerUtente(userId);
+    } catch (e) {
+      errore = 'Errore durante la selezione della carta: $e';
+    }
+
     notifyListeners();
   }
 }

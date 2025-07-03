@@ -15,6 +15,7 @@ class Carta with _$Carta {
     required int expirationYear,
     required String cvv,
     required CardProvider provider,
+    @JsonKey(name: 'default') required bool isDefault,
   }) = _Carta;
 
   factory Carta.fromJson(Map<String, dynamic> json) => _$CartaFromJson(json);

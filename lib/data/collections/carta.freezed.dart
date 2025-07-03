@@ -29,6 +29,8 @@ mixin _$Carta {
   int get expirationYear => throw _privateConstructorUsedError;
   String get cvv => throw _privateConstructorUsedError;
   CardProvider get provider => throw _privateConstructorUsedError;
+  @JsonKey(name: 'default')
+  bool get isDefault => throw _privateConstructorUsedError;
 
   /// Serializes this Carta to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -53,6 +55,7 @@ abstract class $CartaCopyWith<$Res> {
     int expirationYear,
     String cvv,
     CardProvider provider,
+    @JsonKey(name: 'default') bool isDefault,
   });
 }
 
@@ -79,6 +82,7 @@ class _$CartaCopyWithImpl<$Res, $Val extends Carta>
     Object? expirationYear = null,
     Object? cvv = null,
     Object? provider = null,
+    Object? isDefault = null,
   }) {
     return _then(
       _value.copyWith(
@@ -114,6 +118,10 @@ class _$CartaCopyWithImpl<$Res, $Val extends Carta>
                 ? _value.provider
                 : provider // ignore: cast_nullable_to_non_nullable
                       as CardProvider,
+            isDefault: null == isDefault
+                ? _value.isDefault
+                : isDefault // ignore: cast_nullable_to_non_nullable
+                      as bool,
           )
           as $Val,
     );
@@ -137,6 +145,7 @@ abstract class _$$CartaImplCopyWith<$Res> implements $CartaCopyWith<$Res> {
     int expirationYear,
     String cvv,
     CardProvider provider,
+    @JsonKey(name: 'default') bool isDefault,
   });
 }
 
@@ -162,6 +171,7 @@ class __$$CartaImplCopyWithImpl<$Res>
     Object? expirationYear = null,
     Object? cvv = null,
     Object? provider = null,
+    Object? isDefault = null,
   }) {
     return _then(
       _$CartaImpl(
@@ -197,6 +207,10 @@ class __$$CartaImplCopyWithImpl<$Res>
             ? _value.provider
             : provider // ignore: cast_nullable_to_non_nullable
                   as CardProvider,
+        isDefault: null == isDefault
+            ? _value.isDefault
+            : isDefault // ignore: cast_nullable_to_non_nullable
+                  as bool,
       ),
     );
   }
@@ -214,6 +228,7 @@ class _$CartaImpl implements _Carta {
     required this.expirationYear,
     required this.cvv,
     required this.provider,
+    @JsonKey(name: 'default') required this.isDefault,
   });
 
   factory _$CartaImpl.fromJson(Map<String, dynamic> json) =>
@@ -235,10 +250,13 @@ class _$CartaImpl implements _Carta {
   final String cvv;
   @override
   final CardProvider provider;
+  @override
+  @JsonKey(name: 'default')
+  final bool isDefault;
 
   @override
   String toString() {
-    return 'Carta(id: $id, userId: $userId, cardHolderName: $cardHolderName, cardNumber: $cardNumber, expirationMonth: $expirationMonth, expirationYear: $expirationYear, cvv: $cvv, provider: $provider)';
+    return 'Carta(id: $id, userId: $userId, cardHolderName: $cardHolderName, cardNumber: $cardNumber, expirationMonth: $expirationMonth, expirationYear: $expirationYear, cvv: $cvv, provider: $provider, isDefault: $isDefault)';
   }
 
   @override
@@ -258,7 +276,9 @@ class _$CartaImpl implements _Carta {
                 other.expirationYear == expirationYear) &&
             (identical(other.cvv, cvv) || other.cvv == cvv) &&
             (identical(other.provider, provider) ||
-                other.provider == provider));
+                other.provider == provider) &&
+            (identical(other.isDefault, isDefault) ||
+                other.isDefault == isDefault));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -273,6 +293,7 @@ class _$CartaImpl implements _Carta {
     expirationYear,
     cvv,
     provider,
+    isDefault,
   );
 
   /// Create a copy of Carta
@@ -299,6 +320,7 @@ abstract class _Carta implements Carta {
     required final int expirationYear,
     required final String cvv,
     required final CardProvider provider,
+    @JsonKey(name: 'default') required final bool isDefault,
   }) = _$CartaImpl;
 
   factory _Carta.fromJson(Map<String, dynamic> json) = _$CartaImpl.fromJson;
@@ -319,6 +341,9 @@ abstract class _Carta implements Carta {
   String get cvv;
   @override
   CardProvider get provider;
+  @override
+  @JsonKey(name: 'default')
+  bool get isDefault;
 
   /// Create a copy of Carta
   /// with the given fields replaced by the non-null parameter values.

@@ -15,6 +15,7 @@ _$CartaImpl _$$CartaImplFromJson(Map<String, dynamic> json) => _$CartaImpl(
   expirationYear: (json['expirationYear'] as num).toInt(),
   cvv: json['cvv'] as String,
   provider: $enumDecode(_$CardProviderEnumMap, json['provider']),
+  isDefault: json['default'] as bool,
 );
 
 Map<String, dynamic> _$$CartaImplToJson(_$CartaImpl instance) =>
@@ -27,6 +28,7 @@ Map<String, dynamic> _$$CartaImplToJson(_$CartaImpl instance) =>
       'expirationYear': instance.expirationYear,
       'cvv': instance.cvv,
       'provider': _$CardProviderEnumMap[instance.provider]!,
+      'default': instance.isDefault,
     };
 
 const _$CardProviderEnumMap = {
