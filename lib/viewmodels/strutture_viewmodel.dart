@@ -45,4 +45,16 @@ class StruttureViewModel extends ChangeNotifier {
     final campi = await _campoRepository.caricaCampi(strutturaId);
     strutturaDettaglioCampi = campi;
   }
+
+  Future<void> salvaCampo(String strutturaId, Campo campo) async {
+    final campi = await _campoRepository.caricaCampi(strutturaId);
+    final esiste = campi.any((c) => c.id == campo.id);
+
+    if (!esiste) {
+      await _campoRepository.aggiungiCampo(strutturaId, campo);
+    } else {
+      await _campoRepository.aggiornaCampo(strutturaId, campo);
+    }
+  }
+  
 }

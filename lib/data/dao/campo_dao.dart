@@ -10,11 +10,10 @@ class CampoDao {
         .doc(strutturaId)
         .collection('campi');
   }
-
   Future<void> addCampo(String strutturaId, Campo campo) async {
     final ref = getCampiRef(strutturaId).doc();
     final campoWithId = campo.copyWith(id: ref.id);
-    await ref.set(campoWithId.toJson());
+    await ref.set(campoWithId.toManualJson());
   }
 
   Future<void> updateCampo(String strutturaId, Campo campo) async {
@@ -25,7 +24,7 @@ class CampoDao {
     final ref = getCampiRef(strutturaId).doc(campo.id);
 
     try {
-      await ref.update(campo.toJson());
+      await ref.update(campo.toManualJson());
     } on FirebaseException catch (e) {
       if (e.code == 'not-found') {
         throw Exception('Il campo con ID ${campo.id} non esiste e non può essere aggiornato.');

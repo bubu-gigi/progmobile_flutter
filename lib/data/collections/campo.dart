@@ -21,3 +21,24 @@ class Campo with _$Campo {
 
   factory Campo.fromJson(Map<String, dynamic> json) => _$CampoFromJson(json);
 }
+
+extension CampoManualSerialization on Campo {
+  Map<String, dynamic> toManualJson() {
+    return {
+      'id': id,
+      'nomeCampo': nomeCampo,
+      'sport': sport.name,
+      'tipologiaTerreno': tipologiaTerreno.name,
+      'prezzoOrario': prezzoOrario,
+      'numeroGiocatori': numeroGiocatori,
+      'spogliatoi': spogliatoi,
+      'disponibilitaSettimanale': disponibilitaSettimanale.map((orario) {
+        return {
+          'giornoSettimana': orario.giornoSettimana,
+          'orarioApertura': orario.orarioApertura,
+          'orarioChiusura': orario.orarioChiusura,
+        };
+      }).toList(),
+    };
+  }
+}

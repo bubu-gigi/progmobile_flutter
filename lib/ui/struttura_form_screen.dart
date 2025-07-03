@@ -83,7 +83,6 @@ class _StrutturaFormScreenState extends State<StrutturaFormScreen> {
       return '';
     }
   }
-
   Future<void> _salvaStruttura() async {
     if (latLng == null || _nomeController.text.isEmpty) return;
 
@@ -106,13 +105,15 @@ class _StrutturaFormScreenState extends State<StrutturaFormScreen> {
       sportPraticabili: campi.map((c) => c.sport).toSet().toList(),
     );
 
-    if (widget.strutturaDaModificare != null) {
-      await viewModel.aggiornaStruttura(struttura);
-    } else {
-      await viewModel.aggiungiStruttura(struttura);
+    await (widget.strutturaDaModificare != null
+        ? viewModel.aggiornaStruttura(struttura)
+        : viewModel.aggiungiStruttura(struttura));
+
+    for (final campo in campi) {
+      await viewModel.salvaCampo(struttura.id, campo);
     }
 
-    Navigator.pop(context); // Torniamo alla lista
+    Navigator.pop(context);
   }
 
   Future<void> _eliminaStruttura() async {
