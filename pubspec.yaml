@@ -31,6 +31,7 @@ dev_dependencies:
   json_serializable: ^6.7.1
   freezed: ^2.4.6
   flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
@@ -38,3 +39,11 @@ flutter:
     - assets/image1/sfondi4.png
     - assets/image1/sfondo1.png
     - assets/image1/sfondo3.png
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/IconaApp.png"
+  min_sdk_android: 21
+  adaptive_icon_background: "#7C4DFF"
+  adaptive_icon_foreground: "assets/icon/IconaApp.png"
